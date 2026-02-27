@@ -9,20 +9,27 @@ class Player(pygame.sprite.Sprite): # héritage de la classe sprite de pygame (e
         self.health = 100
         self.max_health = 100
         self.attack = 10
-        self.velocity = 2 
+        self.velocity = 1
         # les variables ci-dessus ne sont pas encore utilisées
 
         self.all_projectiles = pygame.sprite.Group() # sachant que les projectiles sont nombreux, ils sont stockés dans une superclasse
-        self.image = pygame.image.load('assets/sprites/pngimg.com - sprite_PNG8927.png') # image du joueur
+        self.sprite_sheet = pygame.image.load('assets/sprites/generic_char_v0.2/png/blue/char_blue_2.png')
+        self.image = self.get_image(0, 0)
+        self.image.set_colorkey([0, 0, 0])
         self.rect = self.image.get_rect() # rectangle du joueur (hitbox)
 
-        self.rect.x = 460 
-        self.rect.y = 620
+        self.rect.x = 430 
+        self.rect.y = 540
         # position de la hitbox du joueur ci-dessus
+    
+    def get_image(self, x, y):
+        image = pygame.Surface([60, 60])
+        image.blit(self.sprite_sheet, (0, 0), (x, y, 60, 60))
+        return image
     
     def launch_projectile(self):
         # Projectile est une sous-classe de Player, lui même sous-classe de Game
-        
+
         self.all_projectiles.add(Projectile()) # ajout de l'objet Projectile au sein de la superclasse
     
     def move_right(self):

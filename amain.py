@@ -5,31 +5,35 @@ from game import Game # importation de la classe Game du fichier game.py afin d'
 pygame.init() # chargement des modules pygame
 
 # création de la fenêtre
-width = 960 
-height = 720
+width = 800
+height = 800
 pygame.display.set_caption('Undertale')
 screen = pygame.display.set_mode((width, height))
 
 '''tmx_data est assigné à la map du jeu qui est un fichier .tmx, map_data est assigné à la map du fichier extraite à partir de la
 fonction pyscroll.data.TiledMapData() enfin group est assigné à la map adaptée à l'écran. Cette map va être dessinée sur l'écran
 dans le 'while'.
-La variable background est en commentaire, avant cette map, j'ai seulement charger une image en guise de première map, mais la
-nouvelle map .tmx ne peut être utilisée de cette manière donc j'ai mis en commentaire mes anciens travaux pour pas les supprimer'''
-#background = pygame.image.load('assets/backgrounds/Ruins_location_entrance.jpg')
+'''
 tmx_data = pytmx.util_pygame.load_pygame('assets/backgrounds/carte_undertale.tmx')
+
+for image in tmx_data.images:
+    if image:
+        image.set_colorkey((255, 255, 255))
+
 map_data = pyscroll.data.TiledMapData(tmx_data)
 maplayer = pyscroll.orthographic.BufferedRenderer(map_data, screen.get_size())
-group = pyscroll.PyscrollGroup(map_layer=maplayer, default_layer=1)
+group = pyscroll.PyscrollGroup(map_layer=maplayer, default_layer=3)
 
 game = Game() # création de l'objet Game
 running = True # boucle du jeu sur True
 
+group.add(game.player)
+
 
 while running:
 
-    group.draw(screen) # dessine la map .tmx
-    #screen.blit(background, (0, 0))
-    screen.blit(game.player.image, game.player.rect) # dessine le joueur 
+    group.update()
+    group.draw(screen) # dessine la map .tmx 
     game.player.all_projectiles.draw(screen) # dessine le groupe de projectile
 
     # En fonction des touches cliquées, le joueur se déplace tout en restant dans la zone du jeu, ici les touches peuvent être
@@ -68,11 +72,9 @@ while running:
 
 ''' 
 - Projectile marche pas encore, le code n'a pas d'erreurs pourtant les projectiles n'apparaissent pas lors du clic sur
-'ESPACE
+'ESPACE'
 
-- La map possède des endroits de 'blanc', j'ai bien utilisé des assets en png, mais certains ne sont pas entièrement transparent
+- Les hitbox des murs n'ont pas encore été codé
 
-- Les hitbox des murs n'a pas encore été codée
-
-- Le main n'a pas été touché, j'en ai crée un autre pour que mon code marche et pour pas casser le travail des autres, donc il faut
+- Le main n'a pas été touché, j'en ai crée un autre pour que mon code marche et pour pas casser le travail des autres, donc il fadrait
 un seul main'''
