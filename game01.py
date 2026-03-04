@@ -113,6 +113,7 @@ class Game01:
                         self.map.load_maps(1, 600, 630)
                         self.walls = self.load_hitbox('carte1/carte_undertale._walls.csv')
 
+
                 elif event.type == pygame.KEYUP: # si la touche n'est pas appuyée
                     self.map.player.pressed[event.key] = False # elle est assignée à False
             

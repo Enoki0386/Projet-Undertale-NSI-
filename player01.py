@@ -46,3 +46,4 @@ class Player01(animation.AnimateSprite):
 
         self.images = animations.get('run_up')
         self.rect.y -= self.velocity # déplacement de la coordonnée y de la hitbox
+    
