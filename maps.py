@@ -1,4 +1,5 @@
 from player01 import Player01
+from knight import Knight
 import pygame
 
 class Map:
@@ -9,6 +10,7 @@ class Map:
         self.height = 1600
 
         self.player = Player01()
+        self.knight = Knight()
     
 
     def load_maps(self, map, x, y):
@@ -31,4 +33,9 @@ class Map:
 
     def update_player(self):
 
-        self.player.update_animation()
+        self.player.update_animation_player()
+    
+
+    def update_knight(self):
+
+        self.knight.update_animation_knight()

@@ -5,7 +5,7 @@ class AnimateSprite(pygame.sprite.Sprite):
     def __init__(self, animation):
 
         super().__init__()
-        self.sprite_sheet = pygame.image.load(f'Sprites/RUN/{animation}.png')
+        self.sprite_sheet = pygame.image.load(f'Sprites/{animation}.png')
         self.image = self.get_image(0, 0)
         self.image.set_colorkey([0, 0, 0])
 
@@ -34,7 +34,7 @@ class AnimateSprite(pygame.sprite.Sprite):
 def load_animation_images(animation):
 
     images = []
-    sprite_sheet = pygame.image.load(f'Sprites/RUN/{animation}.png')
+    sprite_sheet = pygame.image.load(f'Sprites/{animation}.png')
     x = 96
 
     for num in range(7):
@@ -53,5 +53,8 @@ animations = {
     'run_right' : load_animation_images('run_right'),
     'run_left' : load_animation_images('run_left'),
     'run_up' : load_animation_images('run_up'),
-    'run_down' : load_animation_images('run_down')
+    'run_down' : load_animation_images('run_down'),
+    'WALK_right' : load_animation_images('WALK_right'),
+    'WALK_left' : load_animation_images('WALK_left')
 }
+

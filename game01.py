@@ -52,6 +52,7 @@ class Game01:
             self.screen.blit(self.map.background, (-self.camera_x, -self.camera_y))
             self.screen.blit(self.map.path, (0-self.camera_x, -self.camera_y))
             self.screen.blit(self.map.player.image, (self.width // 2 - self.map.player.image.get_width() // 2, self.height // 2 - self.map.player.image.get_height() // 2))
+            self.screen.blit(self.map.knight.image, (self.map.knight.rect.x - self.camera_x, self.map.knight.rect.y - self.camera_y) )
             self.screen.blit(self.map.walls, (-self.camera_x, -self.camera_y))
 
 
@@ -88,6 +89,21 @@ class Game01:
                 for rect in self.walls:
                     if self.map.player.rect.colliderect(rect):
                         self.map.player.rect.top = rect.bottom
+            
+            if abs(self.map.player.rect.x - self.map.knight.rect.x) > 100 or abs(self.map.player.rect.y - self.map.knight.rect.y) > 100:
+                self.map.knight.default_state()
+                self.map.update_knight()
+            
+            if self.map.player.rect.colliderect(self.map.knight.rect):
+        
+                if self.map.player.pressed.get(pygame.K_d):
+                    self.map.player.rect.right = self.map.knight.rect.left
+                elif self.map.player.pressed.get(pygame.K_q):
+                    self.map.player.rect.left = self.map.knight.rect.right
+                elif self.map.player.pressed.get(pygame.K_s):
+                    self.map.player.rect.bottom = self.map.knight.rect.top
+                elif self.map.player.pressed.get(pygame.K_z):
+                    self.map.player.rect.top = self.map.knight.rect.bottom
 
             pygame.display.flip() # mise à jour de l'interface 
 
