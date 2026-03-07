@@ -12,9 +12,10 @@ class Player01(animation.AnimateSprite):
         self.attack = 10
         self.velocity = 5
 
-        self.rect = pygame.Rect(430 + (96 - 56) // 2, 540 + (80 - 60) // 2, 56, 60) # rectangle du joueur (hitbox)
-        self.rect.x = 430 # position de la hitbox du joueur
-        self.rect.y = 540
+        w, h = 30, 40
+        self.rect = pygame.Rect(430 + (96 - w) // 2, 540 + (80 - h) // 2, w, h) # rectangle du joueur (hitbox)
+        self.rect.x = 430 + (96 - w) // 2 # position de la hitbox du joueur
+        self.rect.y = 540 + (80 - h) // 2
 
         self.pressed = {}
     
