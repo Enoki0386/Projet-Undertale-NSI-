@@ -13,6 +13,7 @@ class Player01(animation.AnimateSprite):
         self.velocity = 5
         self.anim_count = 0
         self.direction = 'right'
+        self.inventor = False
 
         w, h = 30, 40
         self.rect = pygame.Rect(430 + (96 - w) // 2, 540 + (80 - h) // 2, w, h) # rectangle du joueur (hitbox)

@@ -46,6 +46,23 @@ class Game01:
             elif direction == 'up':
                 self.map.player.rect.top = monster.rect.bottom
 
+
+    def inventory(self):
+
+        overlay = pygame.Surface((self.width, self.height))
+        overlay.set_alpha(150)
+        overlay.fill((0, 0, 0))
+        self.screen.blit(overlay, (0, 0))
+
+        pygame.draw.rect(self.screen, (20, 20, 30), (200, 100, 400, 300), border_radius=10)
+        pygame.draw.rect(self.screen, (255, 255, 255), (200, 100, 400, 300), 2, border_radius=10)
+
+        for i in range(9):
+            x = 220 + (i % 3) * 120
+            y = 140 + (i // 3) * 80
+            pygame.draw.rect(self.screen, (80, 80, 80), (x, y, 80, 60))
+            pygame.draw.rect(self.screen, (200, 200, 200), (x, y, 80, 60), 1)
+
                 
     def run(self):
 
@@ -94,6 +111,9 @@ class Game01:
                 self.handle_wall_collisions(self.map.player.direction)
                 self.handle_monster_collisions(self.map.player.direction)
             
+            elif self.map.player.inventor:
+                self.inventory()
+            
 
             if self.map.player.attacking:
                 self.map.player.update_animation_player()
@@ -133,6 +153,9 @@ class Game01:
                     
                     if event.key == pygame.K_LSHIFT and 25 < self.map.player.rect.centerx < 66 and 640 < self.map.player.rect.centery < 700:
                         self.map.load_maps(1, 600, 630)
+                    
+                    if event.key == pygame.K_e:
+                        self.map.player.inventor = not self.map.player.inventor
 
 
                 elif event.type == pygame.KEYUP: # si la touche n'est pas appuyée
