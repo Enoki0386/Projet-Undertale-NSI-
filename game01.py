@@ -14,8 +14,6 @@ class Game01:
         self.map = Map()
 
         self.map.load_maps(1, 430, 540)
-        #self.walls = self.load_hitbox('carte1/carte_undertale._walls.csv')
-    
         self.run()
 
   
@@ -75,28 +73,37 @@ class Game01:
             if self.map.player.pressed.get(pygame.K_d) and self.map.player.rect.right < self.map.width:
                 self.map.player.move_right()
                 self.map.update_player()
-                self.handle_wall_collisions('right')
-                self.handle_monster_collisions('right')
+                self.handle_wall_collisions(self.map.player.direction)
+                self.handle_monster_collisions(self.map.player.direction)
             
             elif self.map.player.pressed.get(pygame.K_q) and self.map.player.rect.x > 0:
                 self.map.player.move_left()
                 self.map.update_player()
-                self.handle_wall_collisions('left')
-                self.handle_monster_collisions('left')
+                self.handle_wall_collisions(self.map.player.direction)
+                self.handle_monster_collisions(self.map.player.direction)
 
             elif self.map.player.pressed.get(pygame.K_s) and self.map.player.rect.bottom < self.map.height:
                 self.map.player.move_back()
                 self.map.update_player()
-                self.handle_wall_collisions('down')
-                self.handle_monster_collisions('down')
+                self.handle_wall_collisions(self.map.player.direction)
+                self.handle_monster_collisions(self.map.player.direction)
             
             elif self.map.player.pressed.get(pygame.K_z) and self.map.player.rect.y > 0:
                 self.map.player.move_front()
                 self.map.update_player()
-                self.handle_wall_collisions('up')
-                self.handle_monster_collisions('up')
-
+                self.handle_wall_collisions(self.map.player.direction)
+                self.handle_monster_collisions(self.map.player.direction)
             
+
+            if self.map.player.attacking:
+                self.map.player.update_animation_player()
+                self.map.player.anim_count += 1
+
+                if self.map.player.anim_count >= len(self.map.player.images):
+                    self.map.player.attacking = False
+                    self.map.player.anim_count = 0
+
+
             for monster in self.map.all_monsters:
 
                 player = self.map.player
@@ -118,19 +125,31 @@ class Game01:
 
                 # les touches ne peuvent pas être maintenue ici, un clic = un événement fini
 
-                elif event.type == pygame.KEYDOWN: # si une touche est appuyée
+                if event.type == pygame.KEYDOWN: # si une touche est appuyée
                     self.map.player.pressed[event.key] = True # elle est assignée à True dans le dictionnaire de game.py
 
                     if event.key == pygame.K_LSHIFT and 600 < self.map.player.rect.centerx < 630 and 630 < self.map.player.rect.centery < 660:
                         self.map.load_maps(2, 28, 653)
-                        #self.walls = self.load_hitbox('carte2/carte_undertale_2_walls.csv')
                     
-                    elif event.key == pygame.K_LSHIFT and 25 < self.map.player.rect.centerx < 66 and 640 < self.map.player.rect.centery < 700:
+                    if event.key == pygame.K_LSHIFT and 25 < self.map.player.rect.centerx < 66 and 640 < self.map.player.rect.centery < 700:
                         self.map.load_maps(1, 600, 630)
-                        #self.walls = self.load_hitbox('carte1/carte_undertale._walls.csv')
 
 
                 elif event.type == pygame.KEYUP: # si la touche n'est pas appuyée
                     self.map.player.pressed[event.key] = False # elle est assignée à False
+                
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    self.map.player.pressed[event.button] = True  
+
+                    if self.map.player.pressed.get(1):
+                        self.map.player.attacking = True
+                        self.map.player.current_image = 0
+                        self.map.player.attack()
+        
+
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    self.map.player.pressed[event.button] = False
+                    
             
             clock.tick(60)

@@ -54,6 +54,10 @@ animations = {
     'run_left' : load_animation_images('run_left'),
     'run_up' : load_animation_images('run_up'),
     'run_down' : load_animation_images('run_down'),
+    'attack1_right' : load_animation_images('attack1_right'),
+    'attack1_left' : load_animation_images('attack1_left'),
+    'attack1_down' : load_animation_images('attack1_down'),
+    'attack1_up' : load_animation_images('attack1_up'),
     'WALK_right' : load_animation_images('WALK_right'),
     'WALK_left' : load_animation_images('WALK_left')
 }
