@@ -3,61 +3,64 @@ import animation
 from animation import animations
 
 class Player01(animation.AnimateSprite):
+    '''Cette classe Player01 va créer le joueur et hérite de la classe AnimateSprite gérant l'animation des entités (animation.py)'''
 
     def __init__(self):
+        '''définition de l'objet Joueur'''
+        super().__init__('run_right') # récupération du init de la classe AnimateSprite avec en entrée le nom de fichier qui va servir d'animation (par défaut)
 
-        super().__init__('run_right') # récupération du __init__ de la classe sprite de pygame
+        # définition des variables composant le joueur
         self.health = 100
         self.max_health = 100
-        self.attacking = False
-        self.velocity = 5
-        self.anim_count = 0
-        self.direction = 'right'
-        self.inventor = False
-
-        w, h = 30, 40
-        self.rect = pygame.Rect(430 + (96 - w) // 2, 540 + (80 - h) // 2, w, h) # rectangle du joueur (hitbox)
-        self.rect.x = 430 + (96 - w) // 2 # position de la hitbox du joueur
-        self.rect.y = 540 + (80 - h) // 2
-
-        self.pressed = {}
+        self.attacking = False # permet la gestion des attaques dans la classe Game01 du fichier game01.py
+        self.velocity = 5 # vitesse de déplacement
+        self.anim_count = 0 # nombre de frame jouée par la classe AnimateSPrite
+        self.direction = 'right' # direction par defaut au lancement du jeu
+        self.inventor = False # permet la gestion d'ouverture de l'inventaire
+        w, h = 30, 40 # largeur, hauteur du rectangle du joueur
+        self.rect = pygame.Rect(430 + (96 - w) // 2, 540 + (80 - h) // 2, w, h) # rectangle du joueur, calculé afin d'être centré sur le joueur (avec la position, les proportions de l'image en pixel)
+        self.rect.x = 430 + (96 - w) // 2 # position du rectangle en x
+        self.rect.y = 540 + (80 - h) // 2 # position du rectangle en y
+        self.pressed = {} # dictionnaire gérant les touches controllant le joueur (True = appuyé, False = relaché)
     
 
     def update_animation_player(self):
-
+        '''Cette méthode va appeler la méthode self.animate issu de la classe AnimateSprite afin de mettre à jours les images de l'animation'''
         self.animate()
 
 
     def move_right(self):
-
-        self.images = animations.get('run_right')
+        '''Méthode visant à déplacer le joueur vers la droite tout en actualisant l'animation
+           PS: animations est un dictionnaire contenant des listes des positions successives des animations, les clés sont déjà définies'''
+        self.images = animations.get('run_right') # on stocke l'image du déplacement dans self.images, variable de AnimateSprite
         self.rect.x += self.velocity # déplacement de la coordonnée x de la hitbox
-        self.direction = 'right'
+        self.direction = 'right' # mise à jours de la direction utile pour la gestion des attaques
     
 
     def move_left(self):
-
+        '''Méthode visant à déplacer le joueur vers la gauche tout en actualisant l'animation'''
         self.images = animations.get('run_left')
-        self.rect.x -= self.velocity # déplacement de la coordonnée x de la hitbox
-        self.direction = 'left'
+        self.rect.x -= self.velocity # on stocke l'image du déplacement dans self.images, variable de AnimateSprite
+        self.direction = 'left' # mise à jours de la direction utile pour la gestion des attaques
     
 
     def move_back(self):
-
+        '''Méthode visant à déplacer le joueur vers le bas tout en actualisant l'animation'''
         self.images = animations.get('run_down')
-        self.rect.y += self.velocity # déplacement de la coordonnée y de la hitbox
-        self.direction = 'down'
+        self.rect.y += self.velocity # on stocke l'image du déplacement dans self.images, variable de AnimateSprite
+        self.direction = 'down' # mise à jours de la direction utile pour la gestion des attaques
     
 
     def move_front(self):
-
+        '''Méthode visant à déplacer le joueur vers le haut tout en actualisant l'animation'''
         self.images = animations.get('run_up')
-        self.rect.y -= self.velocity # déplacement de la coordonnée y de la hitbox
-        self.direction = 'up'
+        self.rect.y -= self.velocity # on stocke l'image du déplacement dans self.images, variable de AnimateSprite
+        self.direction = 'up' # mise à jours de la direction utile pour la gestion des attaques
 
 
     def attack(self):
-
+        '''Méthode visant à déclencher l'animation d'attaque. En fonction de self.direction défini plus tôt, si le joueur lance une attaque, l'animation sera adaptée
+        en fontion de sa position'''
         if self.direction == 'right':
             self.images = animations.get('attack1_right')
         
