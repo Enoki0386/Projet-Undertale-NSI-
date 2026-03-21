@@ -144,9 +144,13 @@ class Game01:
                 if monster.health == 0:
                     monster.kill()
 
-                if abs(player.rect.x - monster.rect.x) > 100 or abs(player.rect.y - monster.rect.y) > 100:
+                if abs(player.rect.centerx - monster.rect.centerx) < 100 and abs(player.rect.centery - monster.rect.centery) < 100:
+                    monster.chase_player(player)
+                else:
                     monster.default_state()
-                    self.map.update_monsters()
+                    
+                self.map.update_monsters()
+                
 
             pygame.display.flip() # mise à jour de l'interface 
 
@@ -186,10 +190,8 @@ class Game01:
                         self.map.player.current_image = 0
                         self.map.player.attack()
 
-                        if abs(player.rect.x - monster.rect.x) < 100 or abs(player.rect.y - monster.rect.y) < 100:
-                            
-                            for monster in self.map.all_monsters:
-                                monster.damage(10)
+                        if abs(player.rect.centerx - monster.rect.centerx) < 5 and abs(player.rect.centery - monster.rect.centery) < 5: 
+                            monster.damage(10)
         
 
                 elif event.type == pygame.MOUSEBUTTONUP:

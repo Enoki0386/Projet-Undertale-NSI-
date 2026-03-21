@@ -64,3 +64,20 @@ class Knight(animation.AnimateSprite):
 
         if self.health <= 0:
             self.health = 0
+
+
+    def chase_player(self, player):
+
+        if player.rect.x > self.rect.x:
+            self.rect.x += self.velocity
+            self.images = animations.get('WALK_right')
+
+        elif player.rect.x < self.rect.x:
+            self.rect.x -= self.velocity
+            self.images = animations.get('WALK_left')
+        
+        if player.rect.y > self.rect.y:
+            self.rect.y += self.velocity
+            
+        elif player.rect.y < self.rect.y:
+            self.rect.y -= self.velocity
