@@ -30,6 +30,7 @@ class Map:
     
 
     def load_maps(self, map, x, y):
+        
         self.all_monsters.empty()
         
         if map == 1:
@@ -38,7 +39,7 @@ class Map:
             self.path = pygame.image.load('carte1/carte_undertale_path.png')
             self.walls = pygame.image.load('carte1/carte_undertale_walls.png')
             self.load_wall_group('carte1/carte_undertale._walls.csv')
-            self.spawn_monster()
+            self.spawn_monster(1070, 580)
         
         elif map == 2:
 
@@ -46,10 +47,10 @@ class Map:
             self.path = pygame.image.load('carte2/carte_undertale_2_path.png')
             self.walls = pygame.image.load('carte2/carte_undertale_2_walls.png')   
             self.load_wall_group('carte2/carte_undertale_2_walls.csv')
-            self.spawn_monster() 
+            self.spawn_monster(600, 600) 
 
         self.player.rect.x = x
-        self.player.rect.y = y        
+        self.player.rect.y = y      
 
     
     def load_wall_group(self, filename):
@@ -68,9 +69,9 @@ class Map:
                         self.wall_group.add(Wall(x, y, self.tile_size))
 
     
-    def spawn_monster(self):
+    def spawn_monster(self, x, y):
 
-        knight = Knight()
+        knight = Knight(x, y)
         self.all_monsters.add(knight)
 
 

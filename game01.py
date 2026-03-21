@@ -45,6 +45,19 @@ class Game01:
                 self.map.player.rect.bottom = monster.rect.top
             elif direction == 'up':
                 self.map.player.rect.top = monster.rect.bottom
+    
+    
+    def handle_monster_wall_collisions(self, monster):
+
+        hits = pygame.sprite.spritecollide(monster, self.map.wall_group, False)
+
+        for wall in hits:
+            if monster.direction == 1:
+                monster.rect.right = wall.rect.left
+                monster.direction = -1
+            elif monster.direction == -1:
+                monster.rect.left == wall.rect.right
+                monster.direction = 1
 
 
     def inventory(self):
@@ -83,8 +96,7 @@ class Game01:
                 self.screen.blit(monster.image, (monster.rect.x - self.camera_x, monster.rect.y - self.camera_y))
 
             self.screen.blit(self.map.walls, (-self.camera_x, -self.camera_y))
-
-
+            
             # En fonction des touches cliquées, le joueur se déplace tout en restant dans la zone du jeu, ici les touches peuvent être
             # maintenue afin de ne pas cliquer indéfiniment à chaque pixel
             if self.map.player.pressed.get(pygame.K_d) and self.map.player.rect.right < self.map.width:
@@ -111,12 +123,12 @@ class Game01:
                 self.handle_wall_collisions(self.map.player.direction)
                 self.handle_monster_collisions(self.map.player.direction)
             
-            elif self.map.player.inventor:
+            if self.map.player.inventor:
                 self.inventory()
             
 
             if self.map.player.attacking:
-                self.map.player.update_animation_player()
+                self.map.update_player()
                 self.map.player.anim_count += 1
 
                 if self.map.player.anim_count >= len(self.map.player.images):
@@ -125,12 +137,16 @@ class Game01:
 
 
             for monster in self.map.all_monsters:
-
                 player = self.map.player
+                monster.health_bar(self.screen, self.camera_x, self.camera_y)
+                self.handle_monster_wall_collisions(monster)
+
+                if monster.health == 0:
+                    monster.kill()
 
                 if abs(player.rect.x - monster.rect.x) > 100 or abs(player.rect.y - monster.rect.y) > 100:
                     monster.default_state()
-                    monster.update_animation_knight()
+                    self.map.update_monsters()
 
             pygame.display.flip() # mise à jour de l'interface 
 
@@ -151,7 +167,7 @@ class Game01:
                     if event.key == pygame.K_LSHIFT and 600 < self.map.player.rect.centerx < 630 and 630 < self.map.player.rect.centery < 660:
                         self.map.load_maps(2, 28, 653)
                     
-                    if event.key == pygame.K_LSHIFT and 25 < self.map.player.rect.centerx < 66 and 640 < self.map.player.rect.centery < 700:
+                    elif event.key == pygame.K_LSHIFT and 25 < self.map.player.rect.centerx < 66 and 640 < self.map.player.rect.centery < 700:
                         self.map.load_maps(1, 600, 630)
                     
                     if event.key == pygame.K_e:
@@ -169,6 +185,11 @@ class Game01:
                         self.map.player.attacking = True
                         self.map.player.current_image = 0
                         self.map.player.attack()
+
+                        if abs(player.rect.x - monster.rect.x) < 100 or abs(player.rect.y - monster.rect.y) < 100:
+                            
+                            for monster in self.map.all_monsters:
+                                monster.damage(10)
         
 
                 elif event.type == pygame.MOUSEBUTTONUP:
