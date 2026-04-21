@@ -1,10 +1,10 @@
 import pygame
 from random import randint
 
-class Projectile:
+class Projectile(pygame.sprite.Sprite):
 
     def __init__(self):
-
+        super().__init__()
         self.x = randint(100, 880)
         self.y = 100
         self.speed = 3
@@ -87,4 +87,7 @@ class Minigame:
             self.spawn_time = 0
 
         for projectile in self.projectiles:
-            projectile.move()
+            if projectile.y < 620:
+                projectile.move()
+            else:
+                projectile.kill()
