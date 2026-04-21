@@ -24,7 +24,7 @@ class AnimateSprite(pygame.sprite.Sprite):
             self.current_image = 0 # on revient à 0 car l'animation a été défilée
         
         self.image = self.images[self.current_image] # pour que les positions soit vraiment défilée, on prend la liste des position à l'index de l'image actuelle, cela est stocké dans self.image
-    
+
 
     def get_image(self, x, y):
         '''Méthode permettant de récupérer une seule position du sprite sheet'''
@@ -63,5 +63,7 @@ animations = {
     'attack1_down' : load_animation_images('attack1_down'),
     'attack1_up' : load_animation_images('attack1_up'),
     'WALK_right' : load_animation_images('WALK_right'),
-    'WALK_left' : load_animation_images('WALK_left')
+    'WALK_left' : load_animation_images('WALK_left'),
+    'DEATH' : load_animation_images('DEATH'),
+    'dragon_state' : load_animation_images('dragon_basic_state')   
 } # donc chaque liste de positions à sa clé dans ce dictionnaire

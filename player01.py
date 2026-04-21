@@ -10,9 +10,10 @@ class Player01(animation.AnimateSprite):
         super().__init__('run_right') # récupération du init de la classe AnimateSprite avec en entrée le nom de fichier qui va servir d'animation (par défaut)
 
         # définition des variables composant le joueur
-        self.health = 100
-        self.max_health = 100
+        self.health = 25
+        self.max_health = 25
         self.attacking = False # permet la gestion des attaques dans la classe Game01 du fichier game01.py
+        self.just_attack = False
         self.velocity = 5 # vitesse de déplacement
         self.anim_count = 0 # nombre de frame jouée par la classe AnimateSPrite
         self.direction = 'right' # direction par defaut au lancement du jeu
@@ -72,3 +73,26 @@ class Player01(animation.AnimateSprite):
 
         if self.direction == 'up':
             self.images = animations.get('attack1_up')
+    
+
+    def health_bar(self, surface, camera_x, camera_y):
+
+        bar_color_health = (111, 210, 46)
+        bar_color = (255, 0, 0)
+
+        bar_x = self.rect.x - camera_x + 10
+        bar_y = self.rect.y - camera_y - 10
+
+        bar_position_health = [bar_x, bar_y, self.health, 5]
+        bar_position = [bar_x, bar_y, self.max_health, 5]
+
+        pygame.draw.rect(surface, bar_color, bar_position)
+        pygame.draw.rect(surface, bar_color_health, bar_position_health)
+    
+
+    def damage(self, amount):
+
+        self.health -= amount
+
+        if self.health <= 0:
+            self.health = 0

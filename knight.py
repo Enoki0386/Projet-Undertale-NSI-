@@ -81,3 +81,9 @@ class Knight(animation.AnimateSprite):
             
         elif player.rect.y < self.rect.y:
             self.rect.y -= self.velocity
+    
+
+    def death(self):
+
+        self.health = 0
+        self.images = animations.get('DEATH')
