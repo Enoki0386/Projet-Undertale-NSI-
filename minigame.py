@@ -23,10 +23,11 @@ class Projectile(pygame.sprite.Sprite):
         pygame.draw.rect(screen, (255, 255, 255), (self.rect.x, self.rect.y, self.rect.width, self.rect.height))
 
 
-class Minigame:
+class Minigame(pygame.sprite.Sprite):
 
     def __init__(self):
 
+        super().__init__()
         # définition des variables de l'écran de jeu
         self.width = 880 # 400
         self.height = 520 # 340
@@ -44,6 +45,7 @@ class Minigame:
         # gestion des projectiles
         self.projectiles = pygame.sprite.Group()
         self.spawn_time = 0
+        self.finished = False
 
     
     def move_right(self):
@@ -82,7 +84,12 @@ class Minigame:
 
     def update_projectile(self):
 
+        hits = pygame.sprite.spritecollide(self, self.projectiles, False)
         self.spawn_time += 1
+
+        if hits:
+            self.finished = True
+            return 
 
         if self.spawn_time >= 60: 
             self.projectiles.add(Projectile())
