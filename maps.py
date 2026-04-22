@@ -29,6 +29,7 @@ class Map:
 
         self.player = Player01()
         self.boss = Boss(576, 892)
+        self.minigame = Minigame()
         self.all_monsters = pygame.sprite.Group()
         self.wall_group = pygame.sprite.Group()
         self.items_group = pygame.sprite.Group()
@@ -147,7 +148,3 @@ class Map:
 
         for monster in self.all_monsters:
             monster.update_animation_knight()
-    
-
-    def minigame(self):
-        return Minigame()

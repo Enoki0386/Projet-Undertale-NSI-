@@ -9,11 +9,11 @@ class Game01:
         self.width = 1080
         self.height = 720
         self.objects = {}
+        self.state = 'exploration'
 
         pygame.display.set_caption('Undertale')
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.map = Map()
-        self.minigame = self.map.minigame()
 
         self.init_inventory()
         self.give_start_item('start_sword')
@@ -150,6 +150,12 @@ class Game01:
                     self.screen.blit(self.objects[(rect.x, rect.y)][2], rect)
 
 
+    def launch_minigame(self, screen):
+
+        self.map.minigame.draw_mini_game(screen)
+        self.map.minigame.update_projectile()
+
+
     def run(self):
 
         clock = pygame.time.Clock()
@@ -178,83 +184,83 @@ class Game01:
             
             # En fonction des touches cliquées, le joueur se déplace tout en restant dans la zone du jeu, ici les touches peuvent être
             # maintenue afin de ne pas cliquer indéfiniment à chaque pixel
-            if self.map.player.pressed.get(pygame.K_d) and self.map.player.rect.right < self.map.width:
-                self.map.player.move_right()
-                self.map.update_player()
-                self.handle_wall_collisions(self.map.player.direction)
-                self.handle_monster_collisions(self.map.player.direction)
-            
-            elif self.map.player.pressed.get(pygame.K_q) and self.map.player.rect.x > 0:
-                self.map.player.move_left()
-                self.map.update_player()
-                self.handle_wall_collisions(self.map.player.direction)
-                self.handle_monster_collisions(self.map.player.direction)
-
-            elif self.map.player.pressed.get(pygame.K_s) and self.map.player.rect.bottom < self.map.height:
-                self.map.player.move_back()
-                self.map.update_player()
-                self.handle_wall_collisions(self.map.player.direction)
-                self.handle_monster_collisions(self.map.player.direction)
-            
-            elif self.map.player.pressed.get(pygame.K_z) and self.map.player.rect.y > 0:
-                self.map.player.move_front()
-                self.map.update_player()
-                self.handle_wall_collisions(self.map.player.direction)
-                self.handle_monster_collisions(self.map.player.direction)
-            
-            
-            if self.map.player.inventor:
-                mouse_x, mouse_y = pygame.mouse.get_pos()
-                self.inventory(mouse_x, mouse_y)
-
-
-            if self.map.player.attacking:
-                self.map.update_player()
-                self.map.player.anim_count += 1
-
-                if self.map.player.anim_count >= len(self.map.player.images):
-                    self.map.player.attacking = False
-                    self.map.player.anim_count = 0
-
-
-            if abs(self.map.player.rect.centerx - self.map.boss.rect.centerx) < 100 or abs(self.map.player.rect.centery - self.map.boss.rect.centery) < 100:
-                self.minigame.state = True
-
-                if self.minigame.state == True:
-                    self.minigame.draw_mini_game(self.screen)
-                    self.minigame.update_projectile()
-
-                    if self.map.player.pressed.get(pygame.K_LEFT):
-                        self.minigame.move_left()
-
-                    elif self.map.player.pressed.get(pygame.K_RIGHT):
-                        self.minigame.move_right()
-
-            self.minigame.state = False
-            
-
-            for monster in self.map.all_monsters:
-                player = self.map.player
-                monster.health_bar(self.screen, self.camera_x, self.camera_y)
-                self.handle_monster_wall_collisions(monster)
-
-                if monster.health == 0:
-                    monster.kill()
+            if self.state == 'exploration':
+                if self.map.player.pressed.get(pygame.K_d) and self.map.player.rect.right < self.map.width:
+                    self.map.player.move_right()
+                    self.map.update_player()
+                    self.handle_wall_collisions(self.map.player.direction)
+                    self.handle_monster_collisions(self.map.player.direction)
                 
-                if self.map.player.just_attack:
+                elif self.map.player.pressed.get(pygame.K_q) and self.map.player.rect.x > 0:
+                    self.map.player.move_left()
+                    self.map.update_player()
+                    self.handle_wall_collisions(self.map.player.direction)
+                    self.handle_monster_collisions(self.map.player.direction)
 
-                    if abs(player.rect.centerx - monster.rect.centerx) < 50 and abs(player.rect.centery - monster.rect.centery) < 50: 
-                        monster.damage(10)
-                        
-                if abs(player.rect.centerx - monster.rect.centerx) < 100 and abs(player.rect.centery - monster.rect.centery) < 100:
-                    monster.chase_player(player)
+                elif self.map.player.pressed.get(pygame.K_s) and self.map.player.rect.bottom < self.map.height:
+                    self.map.player.move_back()
+                    self.map.update_player()
+                    self.handle_wall_collisions(self.map.player.direction)
+                    self.handle_monster_collisions(self.map.player.direction)
+                
+                elif self.map.player.pressed.get(pygame.K_z) and self.map.player.rect.y > 0:
+                    self.map.player.move_front()
+                    self.map.update_player()
+                    self.handle_wall_collisions(self.map.player.direction)
+                    self.handle_monster_collisions(self.map.player.direction)
+            
+            
+                if self.map.player.inventor:
+                    mouse_x, mouse_y = pygame.mouse.get_pos()
+                    self.inventory(mouse_x, mouse_y)
 
-                else:
-                    monster.default_state()
+
+                if self.map.player.attacking:
+                    self.map.update_player()
+                    self.map.player.anim_count += 1
+
+                    if self.map.player.anim_count >= len(self.map.player.images):
+                        self.map.player.attacking = False
+                        self.map.player.anim_count = 0
+
+
+                if abs(self.map.player.rect.centerx - self.map.boss.rect.centerx) < 50 or abs(self.map.player.rect.centery - self.map.boss.rect.centery) < 50:
+                    self.state = 'minigame'
+
+
+                for monster in self.map.all_monsters:
+                    player = self.map.player
+                    monster.health_bar(self.screen, self.camera_x, self.camera_y)
+                    self.handle_monster_wall_collisions(monster)
+
+                    if monster.health == 0:
+                        monster.kill()
                     
-                self.map.update_monsters()
+                    if self.map.player.just_attack:
 
-            self.map.player.just_attack = False
+                        if abs(player.rect.centerx - monster.rect.centerx) < 50 and abs(player.rect.centery - monster.rect.centery) < 50: 
+                            monster.damage(10)
+                            
+                    if abs(player.rect.centerx - monster.rect.centerx) < 100 and abs(player.rect.centery - monster.rect.centery) < 100:
+                        monster.chase_player(player)
+
+                    else:
+                        monster.default_state()
+                        
+                    self.map.update_monsters()
+
+                self.map.player.just_attack = False
+
+
+            if self.state == 'minigame':
+                self.launch_minigame(self.screen)
+
+                if self.map.player.pressed.get(pygame.K_LEFT):
+                    self.map.minigame.move_left()
+
+                elif self.map.player.pressed.get(pygame.K_RIGHT):
+                    self.map.minigame.move_right()
+
 
             pygame.display.flip() # mise à jour de l'interface 
 
@@ -286,6 +292,9 @@ class Game01:
 
                     if event.key == pygame.K_e:
                         self.map.player.inventor = not self.map.player.inventor
+                    
+                    if event.key == pygame.K_ESCAPE:
+                        self.state = 'exploration'
 
 
                 elif event.type == pygame.KEYUP: # si la touche n'est pas appuyée
