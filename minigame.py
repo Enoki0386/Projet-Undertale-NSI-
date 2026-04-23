@@ -45,7 +45,15 @@ class Minigame(pygame.sprite.Sprite):
         # gestion des projectiles
         self.projectiles = pygame.sprite.Group()
         self.spawn_time = 0
+        
+        # gestion de l'état du mini jeu 
         self.finished = False
+
+        # grille du mini jeu 2
+        self.grille = self.grille_minigame2()
+
+        # gestion de la grille du mini jeu 2 (au bout de 10s la grille se redessine)
+        self.compteur = 0
 
     
     def move_right(self):
@@ -100,3 +108,56 @@ class Minigame(pygame.sprite.Sprite):
                 projectile.move()
             else:
                 projectile.kill()
+    
+
+    def grille_minigame2(self):
+
+        grille = []
+        case = 60
+        cols = 400 // case
+        lines = 300 // case
+
+        for y in range(lines):
+            ligne = []
+
+            for x in range(cols):
+                ligne.append(randint(0, 1))
+            
+            grille.append(ligne)
+        
+        return grille
+
+
+    def draw_minigame_2(self, screen):
+
+        # mini jeu
+        pygame.draw.rect(screen, (0, 0, 0), (self.x, self.y, self.width, self.height), border_radius=10)
+        pygame.draw.rect(screen, (255, 255, 255), (self.x, self.y, self.width, self.height), 2, border_radius=10)
+
+        case = 60
+        cols = 400 // case
+        lines = 300 // case
+
+        for y in range(lines):
+            for x in range(cols):
+                x1 = 400 + (x * case)
+                y1 = 200 + (y * case)
+                
+                if self.grille[y][x] == 0:
+                    color = (0, 0, 0)
+                else:
+                    color = (255, 255, 255)
+
+                rect = pygame.draw.rect(screen, color, pygame.Rect(x1, y1, case, case))
+                pygame.draw.rect(screen, (200, 200, 200), pygame.Rect(x1, y1, case, case), 1)
+
+        # curseur
+        screen.blit(self.image, (self.rect.x, self.rect.y))
+    
+
+    def update_minigame_2(self):
+        self.compteur += 1
+
+        if self.compteur >= 600: # 60 fps à chaque tour de boucle, ici 10s = 10 tours de boucles donc 10 x 60 = 600 fps
+            self.grille = self.grille_minigame2()
+            self.compteur = 0

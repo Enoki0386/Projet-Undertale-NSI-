@@ -160,6 +160,15 @@ class Game01:
             self.state = 'exploration'
             self.map.minigame.finished = False
             self.map.minigame.projectiles.empty()
+    
+
+    def launch_minigame2(self, screen):
+        self.map.minigame.draw_minigame_2(screen)
+        self.map.minigame.update_minigame_2()
+
+        if self.map.minigame.finished:
+            self.state = 'exploration'
+            self.map.minigame.finished = False
 
 
     def run(self):
@@ -310,7 +319,7 @@ class Game01:
 
 
             if self.state == 'minigame':
-                self.launch_minigame(self.screen)
+                self.launch_minigame2(self.screen)
 
                 if self.map.player.pressed.get(pygame.K_LEFT):
                     self.map.minigame.move_left()
