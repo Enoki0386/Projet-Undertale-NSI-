@@ -1,5 +1,86 @@
 import pygame
+import os
+# ------------------------------------------------------------------
+# Chargement des animations
+# ------------------------------------------------------------------
+def load_animation_images(animation):
+    """
+    Découpe un sprite sheet en liste de frames pygame.Surface.
+ 
+    Le nombre de frames est calculé automatiquement (largeur / FRAME_W),
+    donc ça s'adapte à n'importe quel sprite sheet sans changer le code.
+ 
+    Si le fichier est introuvable, on retourne [] et on affiche un warning
+    au lieu de planter tout le jeu — pratique pendant le développement.
+    """
+    path = f'Sprites/{animation}.png'
+ 
+    if not os.path.exists(path):
+        print(f'[animation] ⚠  sprite introuvable : {path}')
+        return []
+    
+    images = []
+    sprite_sheet = pygame.image.load(f'Sprites/{animation}.png')
+    sheet_width  = sprite_sheet.get_width()
+    num_frames   = sheet_width // 96  # calcul automatique du nombre de frames
 
+    for i in range(num_frames):
+        x = i * 96          # on commence à 0, chaque frame fait FRAME_WIDTH pixels
+        image = pygame.Surface([96, 80])
+        image.blit(sprite_sheet, (0, 0), (x, 0, 96, 80))
+        image.set_colorkey([0, 0, 0])
+        images.append(image)
+ 
+    return images
+# ------------------------------------------------------------------
+# Repertoire global :
+#    · Joueur  → minuscule 
+#    · Knight  → MAJUSCULE
+#    · Boss    → dragon_*
+# ------------------------------------------------------------------
+ 
+animations = {
+    # --- Joueur : déplacement ---
+    'run_right'     : load_animation_images('run_right'),
+    'run_left'      : load_animation_images('run_left'),
+    'run_up'        : load_animation_images('run_up'),
+    'run_down'      : load_animation_images('run_down'),
+ 
+    # --- Joueur : idle (immobile) ---
+    'idle_right'    : load_animation_images('idle_right'),
+    'idle_left'     : load_animation_images('idle_left'),
+    'idle_up'       : load_animation_images('idle_up'),
+    'idle_down'     : load_animation_images('idle_down'),
+ 
+    # --- Joueur : attaque directionnelle ---
+    'attack1_right' : load_animation_images('attack1_right'),
+    'attack1_left'  : load_animation_images('attack1_left'),
+    'attack1_down'  : load_animation_images('attack1_down'),
+    'attack1_up'    : load_animation_images('attack1_up'),
+ 
+    # --- Knight : déplacement ---
+    'WALK_right'    : load_animation_images('WALK_right'),
+    'WALK_left'     : load_animation_images('WALK_left'),
+ 
+    # --- Knight : idle & mort ---
+    'IDLE'          : load_animation_images('IDLE'),
+    'idle_r_knight' : load_animation_images('idle_right'),   # alias pour le knight
+    'idle_l_knight' : load_animation_images('idle_left'),
+    'DEATH'         : load_animation_images('DEATH'),
+ 
+    # --- Knight : attaque ---
+    'ATTACK 1'      : load_animation_images('ATTACK 1'),
+ 
+    # --- Boss : dragon ---
+    'dragon_state'   : load_animation_images('dragon_basic_state'),
+    'dragon_walk'    : load_animation_images('dragon_walking'),
+    'dragon_fight'   : load_animation_images('dragon_fighting'),
+    'dragon_final'   : load_animation_images('dragon_final_state'),
+}
+
+# ------------------------------------------------------------------
+# Animé les animation ? (by Matis)
+# ------------------------------------------------------------------
 class AnimateSprite(pygame.sprite.Sprite):
     '''Création de la classe AnimateSprite permettant d'animer des sprites, ainsi elle hérite de la classe pygame sprite.Sprite, récupérant ses caractéristiques'''
     def __init__(self, animation):
@@ -7,63 +88,29 @@ class AnimateSprite(pygame.sprite.Sprite):
            PS: Pour gérer les animations, dans le dossier du projet, il ya un sous dossier nommé 'Sprites', il contient des sprite sheet, donc des images au
            format .png, chaque image contient les positions successives du personnage, mes méthodes vont donc découper ces sprites sheets afin d'y créer une
            une animation '''
-        super().__init__() # récupération du init de la classe sprite.Sprite de pygame
-        self.sprite_sheet = pygame.image.load(f'Sprites/{animation}.png') # récupération du sprite sheet spécifié avec une entrée, défini par la classe Player01 (player01.py) ou Knight (knight.py)
-        self.image = self.get_image(0, 0) # position du personnage par defaut, c'est la première position du sprite sheet, récupéré par la méthode get_image()
-        self.image.set_colorkey([0, 0, 0]) # pour avoir un fond transparent
+        super().__init__()
+ 
+        self.current_image = 0
+        self.images        = animations.get(animation,[])
+ 
+        # Image initiale = première frame, ou surface vide si animation absente
+        self.image = self.images[0].copy() if self.images else pygame.Surface([96, 80])
+        self.image.set_colorkey((0, 0, 0))
 
-        self.current_image = 0 # compteur de frame jouées
-        self.images = animations.get(animation) # self.images contient une liste des positions découpées du sprite sheet grâce à la fonction load_animation_images, stocké dans le dictionnaire animations
-    
+    def set_animation(self, key):
+        '''Change l'animation seulement si elle est différente de l'actuelle.
+        Remet current_image à 0 pour éviter les freezes sur une mauvaise frame.'''
+        #Débuged !!
+        anim = animations.get(key)
+        if anim is not None and self.images is not anim:
+            self.images        = anim
+            self.current_image = 0
 
     def animate(self):
+        if not self.images:  # sécurité si la liste est None ou vide
+            return
         '''Cette méthode permet de faire défiler les positions pour réaliser une animation'''
-        self.current_image += 1 # à l'appel de la méthode, une frame est défilée
 
-        if self.current_image >= len(self.images): # si le nombre de frames défilées est supérieur au nombre de position dans la liste
-            self.current_image = 0 # on revient à 0 car l'animation a été défilée
-        
-        self.image = self.images[self.current_image] # pour que les positions soit vraiment défilée, on prend la liste des position à l'index de l'image actuelle, cela est stocké dans self.image
-
-
-    def get_image(self, x, y):
-        '''Méthode permettant de récupérer une seule position du sprite sheet'''
-        image = pygame.Surface([96, 80]) # on défini la surface de l'image voulu (correspond au pixels de notre sprite)
-        image.blit(self.sprite_sheet, (0, 0), (x, y, 96, 80)) # on affiche le sprite sheet découpé sur une position
-
-        return image # sauvegarde de cette première position
-
-
-def load_animation_images(animation):
-    '''Fonction (hors de la classe afin d'augmenter la rapidité du programme) permettant de découper le sprite sheet pour récupérer les positions qui sont stockées dans
-       une liste, elle même valeur du dictionnaire animations assigné à la clé permettant de retrouver la liste'''
-    images = [] 
-    sprite_sheet = pygame.image.load(f'Sprites/{animation}.png') # load du sprite sheet
-    x = 96 # largeur de la position (image) souhaitée
-
-    for num in range(7): # le sprite sheet contient 7 positions de 96 pixels
-
-        if x < 768: # si la largeur est conforme à la taille du sprite sheet
-            image = pygame.Surface([96, 80]) # rectangle 
-            image.blit(sprite_sheet, (0, 0), (x, 0, 96, 80)) # découpage
-            image.set_colorkey([0, 0, 0]) # fond transparent
-            images.append(image) # chaque position du sprite sheet est ajouté à la liste contenant l'animation
-            x += 96 # on ajoute la largeur d'une position pour procéder au découpage de la position suivante
-    
-    return images
-
-
-animations = {
-    'run_right' : load_animation_images('run_right'),
-    'run_left' : load_animation_images('run_left'),
-    'run_up' : load_animation_images('run_up'),
-    'run_down' : load_animation_images('run_down'),
-    'attack1_right' : load_animation_images('attack1_right'),
-    'attack1_left' : load_animation_images('attack1_left'),
-    'attack1_down' : load_animation_images('attack1_down'),
-    'attack1_up' : load_animation_images('attack1_up'),
-    'WALK_right' : load_animation_images('WALK_right'),
-    'WALK_left' : load_animation_images('WALK_left'),
-    'DEATH' : load_animation_images('DEATH'),
-    'dragon_state' : load_animation_images('dragon_basic_state')   
-} # donc chaque liste de positions à sa clé dans ce dictionnaire
+        self.current_image = (self.current_image + 1) % len(self.images)
+        self.image         = self.images[self.current_image]
+        self.image.set_colorkey([0, 0, 0])

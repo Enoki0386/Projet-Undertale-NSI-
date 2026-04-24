@@ -1,150 +1,139 @@
-from player01 import Player01
-from knight import Knight
-from item import Item
-from minigame import Minigame
-from boss import Boss
 import pygame
 import csv
-from random import randint
-
-
+from random import randint, choice
+ 
+from player01 import Player01
+from knight   import Knight
+from item     import Item
+from minigame import Minigame
+from boss     import Boss
+ 
+# ------------------------------------------------------------------
+# Répertoire des textures et autres
+# ------------------------------------------------------------------
+Map_settings = {
+    1: {
+        'background' : 'carte1/carte_undertale_background.png',
+        'path'       : 'carte1/carte_undertale_path.png',
+        'walls_img'  : 'carte1/carte_undertale_walls.png',
+        'walls_csv'  : 'carte1/carte_undertale._walls.csv',
+        'spawn_zone' : (800, 1400, 200, 1200),   # x_min, x_max, y_min, y_max
+    },
+    2: {
+        'background' : 'carte2/carte_undertale_2_background.png',
+        'path'       : 'carte2/carte_undertale_2_path.png',
+        'walls_img'  : 'carte2/carte_undertale_2_walls.png',
+        'walls_csv'  : 'carte2/carte_undertale_2_walls.csv',
+        'spawn_zone' : (600, 1500, 200, 1400),
+    },
+}
+ 
+Items_choice     = ['shield', 'heart', 'knife']
+Monstre_nbr    = 5
+Items_nbr      = 5
+WALL_Y_OFFSET = 8
+# ------------------------------------------------------------------
+# Création des murs
+# ------------------------------------------------------------------
 class Wall(pygame.sprite.Sprite):
-    
     def __init__(self, x, y, size):
-
         super().__init__()
-        self.image = pygame.Surface((size, size))
+        self.image  = pygame.Surface((size, size))
         self.image.fill((0, 0, 0))
-        self.rect = pygame.Rect(x, y, size, size)
-        self.mask = pygame.mask.from_surface(self.image)
-
-
+        self.rect   = pygame.Rect(x, y, size, size)
+        self.mask   = pygame.mask.from_surface(self.image)
+# ------------------------------------------------------------------
+# Creation de la map
+# ------------------------------------------------------------------
 class Map:
-
     def __init__(self):
+        self.width          = 1600
+        self.height         = 1600
+        self.tile_size      = 16
 
-        self.width = 1600
-        self.height = 1600
-        self.tile_size = 16
-
-        self.player = Player01()
-        self.boss = Boss(576, 892)
-        self.minigame = Minigame()
-        self.all_monsters = pygame.sprite.Group()
-        self.wall_group = pygame.sprite.Group()
-        self.items_group = pygame.sprite.Group()
-        self.items_choice = ['shield', 'heart', 'knife']
+        self.player         = Player01()
+        self.boss           = Boss(576, 892)
+        self.minigame       = Minigame()
+        self.all_monsters   = pygame.sprite.Group()
+        self.wall_group     = pygame.sprite.Group()
+        self.items_group    = pygame.sprite.Group()
         
+        # Surfaces chargées lors de load_maps()
+        self.background: pygame.Surface | None = None
+        self.path:       pygame.Surface | None = None
+        self.walls:      pygame.Surface | None = None
 
+        self.boss.map_width  = self.width
+        self.boss.map_height = self.height
+    # ------------------------------------------------------------------
+    # Chargement map et murs
+    # ------------------------------------------------------------------
     def load_maps(self, map, x, y):
-        
+        '''Charge une carte : images, CSV des murs, monstres et objets.'''
         self.all_monsters.empty()
         self.items_group.empty()
         
-        if map == 1:
-
-            self.background = pygame.image.load('carte1/carte_undertale_background.png')
-            self.path = pygame.image.load('carte1/carte_undertale_path.png')
-            self.walls = pygame.image.load('carte1/carte_undertale_walls.png')
-            self.load_wall_group('carte1/carte_undertale._walls.csv')
-        
-        elif map == 2:
-
-            self.background = pygame.image.load('carte2/carte_undertale_2_background.png')
-            self.path = pygame.image.load('carte2/carte_undertale_2_path.png')
-            self.walls = pygame.image.load('carte2/carte_undertale_2_walls.png')   
-            self.load_wall_group('carte2/carte_undertale_2_walls.csv')
-        
-        self.monsters_spawner(map)
-        self.items_spawner(map)
-
+        Map_set = Map_settings[map]
+        self.background = pygame.image.load(Map_set['background'])
+        self.path       = pygame.image.load(Map_set['path'])
+        self.walls      = pygame.image.load(Map_set['walls_img'])
+ 
+        self.load_wall_group(Map_set['walls_csv'])
+        self.spawn_monsters(Map_set['spawn_zone'])
+        self.spawn_items(Map_set['spawn_zone'])
+ 
         self.player.rect.x = x
-        self.player.rect.y = y      
-
+        self.player.rect.y = y
+        self.player.sync_float_pos()   # resync la position flottante
+        
     
     def load_wall_group(self, filename):
-
+        '''Lit le CSV et crée les sprites de collision pour chaque tuile non vide.'''
         self.wall_group.empty()
 
         with open(filename) as f:
-            reader = csv.reader(f)
-            row_index = 0
-
-            for row in reader:
-                col_index = 0
-
-                for tile in row:
+            for row_index, row in enumerate(csv.reader(f)):
+                for col_index, tile in enumerate(row):
                     if int(tile.strip()) != -1:
                         x = col_index * self.tile_size
                         y = row_index * self.tile_size
                         self.wall_group.add(Wall(x, y, self.tile_size))
-                    
-                    col_index += 1
-                
-                row_index += 1
 
-    
-    def spawn_monster(self, x, y):
-
-        knight = Knight(x, y)
-        self.all_monsters.add(knight)
-
-
-    def monsters_spawner(self, map):
-
-        repeteur = 0
-
-        while repeteur < 5:
-            x = randint(0, 1600)
-            y = randint(0, 1600)
-            
-            if map == 1:
-                if 800 < x < 1400 and 200 < y < 1200:
-                    self.spawn_monster(x, y)
-                    repeteur += 1
-                    continue
-            
-            elif map == 2:
-                if 600 < x < 1500 and 200 < y < 1400:
-                    self.spawn_monster(x, y)
-                    repeteur += 1
-                    continue
+    # ------------------------------------------------------------------
+    # Spawn montre et items 
+    # ------------------------------------------------------------------
+    def spawn_monsters(self, zone):
+        '''Fait apparaître Monster_nbr chevaliers dans la zone définie.'''
+        x_min, x_max, y_min, y_max = zone
+        res = 0
+        while res < Monstre_nbr:
+            x = randint(x_min, x_max)
+            y = randint(y_min, y_max)
+            k = Knight(x, y)
+            # Transmet les limites de la map au knight pour le clamping
+            k.map_width  = self.width
+            k.map_height = self.height
+            self.all_monsters.add(k)
+            res += 1
     
 
-    def items_spawner(self, map):
-
-        repeteur = 0
-
-        while repeteur < 5:
-            x = randint(0, 1600)
-            y = randint(0, 1600)
-            name = self.items_choice[randint(0, len(self.items_choice) - 1)]
-            
-            if map == 1:
-                if 800 < x < 1400 and 200 < y < 1200:
-                    self.spawn_item(name, x, y)
-                    repeteur += 1
-                    continue
-            
-            elif map == 2:
-                if 600 < x < 1500 and 200 < y < 1400:
-                    self.spawn_item(name, x, y)
-                    repeteur += 1
-                    continue
-
+    def spawn_items(self, zone):
+        '''Fait apparaître Item_nbr objets aléatoires dans la zone définie.'''
+        x_min, x_max, y_min, y_max = zone
+        res = 0
+        while res < Items_nbr:
+            x    = randint(x_min, x_max)
+            y    = randint(y_min, y_max)
+            name = choice(Items_choice)
+            self.items_group.add(Item(name, x, y))
+            res += 1
     
-    def spawn_item(self, name, x, y):
-
-        item = Item(name, x, y)
-        self.items_group.add(item)
-    
-
+    # ------------------------------------------------------------------
+    # Update des joueurs + monstres 
+    # ------------------------------------------------------------------
     def update_player(self):
-
         self.player.update_animation_player()
     
-
     def update_monsters(self):
-
         for monster in self.all_monsters:
             monster.update_animation_knight()

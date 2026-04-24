@@ -2,6 +2,14 @@ import pygame
 import animation
 from animation import animations
 
+# ─────────────────────────────────────────────────────────────────────────────
+#  Paramètres du boss — tuner ici pour équilibrer la difficulté
+# ─────────────────────────────────────────────────────────────────────────────
+Detect_range   = 400   # distance à laquelle le dragon commence à se déplacer
+Minigame_range = 80    # distance pour déclencher le mini-jeu (ancienne valeur : 50)
+BOSS_VELOCITY  = 1.2   # plus lent que le joueur pour rester rattrapable
+MAP_PADDING    = 10
+
 class Boss(animation.AnimateSprite):
     '''Cette classe est en construction, elle devrait créer le boss du jeu. Cependant ici, elle sert uniquement à déclencher une
     mécanique du jeu, qui est le mini-jeu. Ainsi il n'y a pas d'animations, de collisions encore.'''
