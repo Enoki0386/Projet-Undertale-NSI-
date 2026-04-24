@@ -214,11 +214,40 @@ class Game01:
                                 item.kill()
                                 break
 
-                    if event.key == pygame.K_e:
-                        self.map.player.inventor = not self.map.player.inventor
+                    if self.state == 'exploration':
+                        if event.key == pygame.K_LSHIFT and 600 < self.map.player.rect.centerx < 630 and 630 < self.map.player.rect.centery < 660:
+                            self.map.load_maps(2, 28, 653)
+                        
+                        elif event.key == pygame.K_LSHIFT and 25 < self.map.player.rect.centerx < 66 and 640 < self.map.player.rect.centery < 700:
+                            self.map.load_maps(1, 600, 630)
+                        
+
+                        for item in self.map.items_group:
+                            if event.key == pygame.K_f and abs(self.map.player.rect.x - item.rect.x) < 25 and abs(self.map.player.rect.y - item.rect.y) < 25:
+                                self.put_in_inventory(item)
+                                item.kill()
+                                break
+
+                        if event.key == pygame.K_e:
+                            self.map.player.inventor = not self.map.player.inventor
                     
-                    if event.key == pygame.K_ESCAPE:
-                        self.state = 'exploration'
+
+                    if self.state == 'minigame':
+                        if event.key == pygame.K_ESCAPE:
+                            self.state = 'exploration'
+
+
+                        if event.key == pygame.K_LEFT:
+                            self.map.minigame.move_case_left()
+
+                        elif event.key == pygame.K_RIGHT:
+                            self.map.minigame.move_case_right()
+                        
+                        elif event.key == pygame.K_UP:
+                            self.map.minigame.move_case_up()
+                        
+                        elif event.key == pygame.K_DOWN:
+                            self.map.minigame.move_case_down()
 
 
                 elif event.type == pygame.KEYUP:                # si la touche n'est pas appuyée
@@ -352,14 +381,7 @@ class Game01:
         # ── Inventaire ────────────────────────────────────────────────────────
         if player.inventor:
             self.inventory(*pygame.mouse.get_pos())
- 
-        """# ── Boss ──────────────────────────────────────────────────────────────
-        boss = self.map.boss
-        boss.update_boss(player)
- 
-        if not self.minigame_active and boss.ready_to_fight:
-            self.state           = 'minigame'
-            self.minigame_active = True"""
+
  
         # ── Monstres (IA + collisions + dégâts) ──────────────────────────────
         for monster in list(self.map.all_monsters):

@@ -55,6 +55,13 @@ class Minigame(pygame.sprite.Sprite):
         # gestion de la grille du mini jeu 2 (au bout de 10s la grille se redessine)
         self.compteur = 0
 
+        # coordonnées de la case gagnante (mini jeu 2)
+        self.i = 0
+        self.j = 0
+
+        # mise à jour de la position du curseur pour le mini jeu 2 (solution temporaire) et de la case gagnante
+        self.place_cursor_and_win_case()
+        
     
     def move_right(self):
         
@@ -66,14 +73,24 @@ class Minigame(pygame.sprite.Sprite):
         self.rect.x -= self.velocity
     
 
-    def move_back(self):
-        
-        self.rect.y -= self.velocity
+    def move_case_right(self):
+
+        self.rect.x += 60
+
+    
+    def move_case_left(self):
+
+        self.rect.x -= 60
     
 
-    def move_front(self):
-        
-        self.rect.y += self.velocity
+    def move_case_up(self):
+
+        self.rect.y -= 60
+    
+
+    def move_case_down(self):
+
+        self.rect.y += 60
     
 
     def draw_mini_game(self, screen):
@@ -148,16 +165,50 @@ class Minigame(pygame.sprite.Sprite):
                 else:
                     color = (255, 255, 255)
 
-                rect = pygame.draw.rect(screen, color, pygame.Rect(x1, y1, case, case))
+                pygame.draw.rect(screen, color, pygame.Rect(x1, y1, case, case))
                 pygame.draw.rect(screen, (200, 200, 200), pygame.Rect(x1, y1, case, case), 1)
-
-        # curseur
+        
+        pygame.draw.rect(screen, (0, 128, 0), pygame.Rect(self.j, self.i, case, case))
+        
         screen.blit(self.image, (self.rect.x, self.rect.y))
     
 
     def update_minigame_2(self):
+        
+        case = 60
+        col = (self.rect.x - 400) // case
+        line = (self.rect.y - 200) // case
+
         self.compteur += 1
 
-        if self.compteur >= 600: # 60 fps à chaque tour de boucle, ici 10s = 10 tours de boucles donc 10 x 60 = 600 fps
+        if self.compteur >= 200: # 60 fps à chaque tour de boucle, ici 10s = 10 tours de boucles donc 10 x 60 = 600 fps
             self.grille = self.grille_minigame2()
             self.compteur = 0
+        
+        if self.grille[line][col] == 1:
+            self.finished = True
+        
+        elif self.j == line and self.i == col:
+            self.finished = True
+            print('win')
+
+                
+    def place_cursor_and_win_case(self):
+
+        case = 60
+        cols = 400 // case
+        lines = 300 // case
+
+        # case gagnante
+        line = randint(0, lines)
+        col = randint(0, cols)
+        self.i = 200 + (case * line)
+        self.j = 400 + (case * col)
+        
+        # curseur
+        for i in range(lines):
+            for j in range(cols):
+                if self.grille[i][j] == 0:
+                    self.rect.y = 200 + (case * i) + (case // 2) - (self.rect.height // 2)
+                    self.rect.x = 400 + (case * j) + (case // 2) - (self.rect.width // 2)
+                    return
