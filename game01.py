@@ -315,6 +315,7 @@ class Game01:
         # Affichage des monstres
         for monster in self.map.all_monsters:
             self.screen.blit(monster.image, (monster.rect.x - cam_x, monster.rect.y - cam_y))
+            monster.health_bar(self.screen, cam_x, cam_y)
  
         # Affichage du boss
         self.screen.blit(self.map.boss.image, (self.map.boss.rect.x - cam_x, self.map.boss.rect.y - cam_y))
