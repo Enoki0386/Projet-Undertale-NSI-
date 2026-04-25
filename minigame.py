@@ -7,10 +7,16 @@ class Projectile(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.Surface((15, 15))
         self.image.fill((255, 255, 255))
+
+        self.skull_image = pygame.image.load('objects/skull.png')
+        self.skull_image = pygame.transform.scale(self.skull_image, (15, 15))
+
         self.rect = self.image.get_rect()
         self.rect.x = randint(100, 880)
         self.rect.y = 100
         self.speed = 3
+
+        self.y = randint(100, 520)
     
 
     def move(self):
@@ -18,9 +24,30 @@ class Projectile(pygame.sprite.Sprite):
         self.rect.y += self.speed
     
 
+    def missile_mode(self, rect):
+
+        dx = rect.centerx - self.rect.centerx
+        dy = rect.centery - self.rect.centery
+
+        # Déplacement X
+        if abs(dx) > 2:  
+            step_x = self.speed if dx > 0 else -self.speed
+            self.rect.x += step_x
+ 
+        # Déplacement Y
+        if abs(dy) > 2:
+            step_y = self.speed if dy > 0 else -self.speed
+            self.rect.y += step_y
+    
+
     def draw_projectile(self, screen):
         
         pygame.draw.rect(screen, (255, 255, 255), (self.rect.x, self.rect.y, self.rect.width, self.rect.height))
+    
+
+    def blit_projectile(self, screen):
+
+        screen.blit(self.skull_image, (self.rect.x, self.y))
 
 
 class Minigame(pygame.sprite.Sprite):
@@ -260,3 +287,45 @@ class Minigame(pygame.sprite.Sprite):
                     self.rect.y = 200 + (case * i) + (case // 2) - (self.rect.height // 2)
                     self.rect.x = 400 + (case * j) + (case // 2) - (self.rect.width // 2)
                     return
+    
+
+    def get_pos_cursor(self):
+
+        if self.x < self.rect.x < self.width and self.y < self.rect.y < self.height:
+            mx, my = pygame.mouse.get_pos()
+            self.rect.x = mx
+            self.rect.y = my
+
+    
+    def draw_minigame_4(self, screen):
+
+        # mini jeu
+        pygame.draw.rect(screen, (0, 0, 0), (self.x, self.y, self.width, self.height), border_radius=10)
+        pygame.draw.rect(screen, (255, 255, 255), (self.x, self.y, self.width, self.height), 2, border_radius=10)
+
+        # curseur
+        screen.blit(self.image, (self.rect.x, self.rect.y))
+
+        # projectiles
+        for projectile in self.projectiles:
+            projectile.blit_projectile(screen)
+    
+
+    def update_minigame_4(self):
+
+        hits = pygame.sprite.spritecollide(self, self.projectiles, False)
+        self.spawn_time += 1
+
+        if hits:
+            self.finished = True
+            return 
+
+        if self.spawn_time >= 60: 
+            self.projectiles.add(Projectile())
+            self.spawn_time = 0
+
+        for projectile in self.projectiles:
+            if projectile.rect.y < (620 - projectile.rect.height): # 15 = taille du projectile
+                projectile.missile_mode(self.rect)
+            else:
+                projectile.kill()

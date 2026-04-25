@@ -181,6 +181,18 @@ class Game01:
         if self.map.minigame.finished:
             self.state = 'exploration'
             self.map.minigame.finished = False
+    
+
+    def launch_minigame_4(self, screen):
+        pygame.mouse.set_visible(False)
+        self.map.minigame.draw_minigame_4(screen)
+        self.map.minigame.update_minigame_4()
+        self.map.minigame.get_pos_cursor()
+
+        if self.map.minigame.finished:
+            self.state = 'exploration'
+            self.map.minigame.finished = True
+
 
     # ------------------------------------------------------------------ 
     #  Main boucle                                                       
@@ -422,7 +434,7 @@ class Game01:
  
     def _update_minigame(self) -> None:
         """Délègue l'affichage et la logique au mini-jeu, gère les contrôles."""
-        self.launch_minigame_player(self.screen)
+        self.launch_minigame_4(self.screen)
         '''
         if self.map.player.pressed.get(pygame.K_LEFT):
             self.map.minigame.move_left()
