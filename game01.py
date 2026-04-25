@@ -172,6 +172,15 @@ class Game01:
         if self.map.minigame.finished:
             self.state = 'exploration'
             self.map.minigame.finished = False
+    
+
+    def launch_minigame_player(self, screen):
+        self.map.minigame.player_turn_minigame(screen)
+        self.map.minigame.update_player_minigame()
+
+        if self.map.minigame.finished:
+            self.state = 'exploration'
+            self.map.minigame.finished = False
 
     # ------------------------------------------------------------------ 
     #  Main boucle                                                       
@@ -197,36 +206,25 @@ class Game01:
                 if event.type == pygame.KEYDOWN:                # si une touche est appuyée
                     self.map.player.pressed[event.key] = True   # elle est assignée à True dans le dictionnaire de game.py
 
-                    # Changement de map
-                    px, py = self.map.player.rect.centerx, self.map.player.rect.centery
-                    if event.key == pygame.K_LSHIFT:
-                        if 600 < px < 630 and 630 < py < 660:
-                            self.map.load_maps(2, 28, 653)
-                        elif 25 < px < 66 and 640 < py < 700:
-                            self.map.load_maps(1, 600, 630)
-                    
-                    # Ramassage d'item
-                    if event.key == pygame.K_f:
-                        for item in self.map.items_group:
-                            if abs(self.map.player.rect.x - item.rect.x) < 25 and \
-                               abs(self.map.player.rect.y - item.rect.y) < 25:      #pour éviter d'etre trop long on met un \
-                                self.put_in_inventory(item)
-                                item.kill()
-                                break
-
                     if self.state == 'exploration':
-                        if event.key == pygame.K_LSHIFT and 600 < self.map.player.rect.centerx < 630 and 630 < self.map.player.rect.centery < 660:
-                            self.map.load_maps(2, 28, 653)
-                        
-                        elif event.key == pygame.K_LSHIFT and 25 < self.map.player.rect.centerx < 66 and 640 < self.map.player.rect.centery < 700:
-                            self.map.load_maps(1, 600, 630)
-                        
 
-                        for item in self.map.items_group:
-                            if event.key == pygame.K_f and abs(self.map.player.rect.x - item.rect.x) < 25 and abs(self.map.player.rect.y - item.rect.y) < 25:
-                                self.put_in_inventory(item)
-                                item.kill()
-                                break
+                        # Changement de map
+                        px, py = self.map.player.rect.centerx, self.map.player.rect.centery
+                        if event.key == pygame.K_LSHIFT:
+                            if 600 < px < 630 and 630 < py < 660:
+                                self.map.load_maps(2, 28, 653)
+                            elif 25 < px < 66 and 640 < py < 700:
+                                self.map.load_maps(1, 600, 630)
+                    
+                        # Ramassage d'item
+                        if event.key == pygame.K_f:
+                            for item in self.map.items_group:
+                                if abs(self.map.player.rect.x - item.rect.x) < 25 and \
+                                abs(self.map.player.rect.y - item.rect.y) < 25:      #pour éviter d'etre trop long on met un \
+                                    self.put_in_inventory(item)
+                                    item.kill()
+                                    break
+                        
 
                         if event.key == pygame.K_e:
                             self.map.player.inventor = not self.map.player.inventor
@@ -235,7 +233,6 @@ class Game01:
                     if self.state == 'minigame':
                         if event.key == pygame.K_ESCAPE:
                             self.state = 'exploration'
-
 
                         if event.key == pygame.K_LEFT:
                             self.map.minigame.move_case_left()
@@ -248,6 +245,14 @@ class Game01:
                         
                         elif event.key == pygame.K_DOWN:
                             self.map.minigame.move_case_down()
+                        
+
+                        if event.key == pygame.K_SPACE:
+                            if self.map.minigame.COLOR == (0, 128, 0):
+                                self.map.minigame.finished = True
+                            else:
+                                self.map.minigame.COLOR = (255, 0, 0)
+                                self.map.minigame.finished = True
 
 
                 elif event.type == pygame.KEYUP:                # si la touche n'est pas appuyée
@@ -276,7 +281,7 @@ class Game01:
  
             # -- État mini-jeu --
             elif self.state == 'minigame':
-                self.update_minigame()
+                self._update_minigame()
  
             pygame.display.flip()
             clock.tick(60) # nbr de frames par sec
@@ -402,7 +407,12 @@ class Game01:
                abs(player.rect.centerx - monster.rect.centerx) < 55 and \
                abs(player.rect.centery - monster.rect.centery) < 55:
                 monster.damage(10)
- 
+
+            # permet de passer en mini jeu lorsqu'on s'approche du boss
+            if not self.minigame_active and (abs(player.rect.centerx - self.map.boss.rect.centerx) < 50 and abs(player.rect.centery - self.map.boss.rect.centery) < 50):
+                self.state = 'minigame'
+                self.minigame_active = True
+
         player.just_attack = False
  
  
@@ -412,9 +422,10 @@ class Game01:
  
     def _update_minigame(self) -> None:
         """Délègue l'affichage et la logique au mini-jeu, gère les contrôles."""
-        self.launch_minigame()
- 
+        self.launch_minigame_player(self.screen)
+        '''
         if self.map.player.pressed.get(pygame.K_LEFT):
             self.map.minigame.move_left()
         elif self.map.player.pressed.get(pygame.K_RIGHT):
             self.map.minigame.move_right()
+        '''

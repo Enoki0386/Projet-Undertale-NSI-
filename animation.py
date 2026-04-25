@@ -23,14 +23,16 @@ def load_animation_images(animation):
     sprite_sheet = pygame.image.load(f'Sprites/{animation}.png')
     sheet_width  = sprite_sheet.get_width()
     num_frames   = sheet_width // 96  # calcul automatique du nombre de frames
+    frame_w = sprite_sheet.get_width() // num_frames
+    frame_h = sprite_sheet.get_height() 
 
     for i in range(num_frames):
-        x = i * 96          # on commence à 0, chaque frame fait FRAME_WIDTH pixels
-        image = pygame.Surface([96, 80])
-        image.blit(sprite_sheet, (0, 0), (x, 0, 96, 80))
+        x = i * frame_w        # on commence à 0, chaque frame fait FRAME_WIDTH pixels
+        image = pygame.Surface([frame_w, frame_h])
+        image.blit(sprite_sheet, (0, 0), (x, 0, frame_w, frame_h))
         image.set_colorkey([0, 0, 0])
         images.append(image)
- 
+
     return images
 # ------------------------------------------------------------------
 # Repertoire global :

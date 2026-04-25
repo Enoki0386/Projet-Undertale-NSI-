@@ -42,6 +42,15 @@ class Minigame(pygame.sprite.Sprite):
         self.rect.y = self.height + (100 - self.rect.height) - 10
         self.velocity = 5
 
+        # caractéristiques du rectangle jouable par le joueur
+        self.movement = 5
+        self.direction = 'right'
+        self.POS_X = self.x + 100
+        self.POS_Y = self.y + 200
+        self.WIDTH_RECT = 50
+        self.HEIGHT_RECT = 30
+        self.COLOR = (0, 0, 0)
+
         # gestion des projectiles
         self.projectiles = pygame.sprite.Group()
         self.spawn_time = 0
@@ -75,23 +84,62 @@ class Minigame(pygame.sprite.Sprite):
 
     def move_case_right(self):
 
-        self.rect.x += 60
+        if self.rect.x + 60 <= self.width + self.x:
+            self.rect.x += 60
 
     
     def move_case_left(self):
 
-        self.rect.x -= 60
+        if self.rect.x - 60 >= self.x:
+            self.rect.x -= 60
     
 
     def move_case_up(self):
 
-        self.rect.y -= 60
+        if self.rect.y - 60 >= self.y:
+            self.rect.y -= 60
     
 
     def move_case_down(self):
 
-        self.rect.y += 60
+        if self.rect.y + 60 <= self.y + self.height:
+            self.rect.y += 60
     
+
+    def player_turn_minigame(self, screen):
+
+        # mini jeu
+        middle_x = (self.x + self.width) / 2
+        pygame.draw.rect(screen, self.COLOR, (self.x, self.y, self.width, self.height), border_radius=10)
+        pygame.draw.rect(screen, (255, 255, 255), (self.x, self.y, self.width, self.height), 2, border_radius=10)
+        pygame.draw.line(screen, (255, 255, 255), (middle_x, self.y), (middle_x, self.height), 10)
+
+        # RECT où le joueur doit interragir avec dans le mini jeu (pas le curseur) pour gagner
+        RECT = pygame.draw.rect(screen, (255, 255, 255), (self.POS_X, self.POS_Y, self.WIDTH_RECT, self.HEIGHT_RECT), border_radius=10)
+
+    
+    def RECT_movements(self):
+
+        self.POS_X += self.movement * (1 if self.direction == 'right' else -1)
+
+        if self.POS_X >= self.width:
+            self.direction = 'left'
+            
+        elif self.POS_X <= self.x:
+            self.direction = 'right'
+    
+
+    def update_player_minigame(self):
+
+        self.RECT_movements()
+        middle = (self.x + self.width) / 2
+
+        if middle - 50 <= self.POS_X <= middle + 50:
+            self.COLOR = (0, 128, 0)
+
+        else:
+            self.COLOR = (0, 0, 0)
+
 
     def draw_mini_game(self, screen):
 
