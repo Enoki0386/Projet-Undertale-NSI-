@@ -7,6 +7,7 @@ from knight   import Knight
 from item     import Item
 from minigame import Minigame
 from boss     import Boss
+from npc      import NPC
  
 # ------------------------------------------------------------------
 # Répertoire des textures et autres
@@ -31,6 +32,7 @@ Map_settings = {
 Items_choice     = ['shield', 'heart', 'knife']
 Monstre_nbr    = 5
 Items_nbr      = 5
+Npcs_nbr       = 2
 WALL_Y_OFFSET = 8
 # ------------------------------------------------------------------
 # Création des murs
@@ -57,6 +59,7 @@ class Map:
         self.all_monsters   = pygame.sprite.Group()
         self.wall_group     = pygame.sprite.Group()
         self.items_group    = pygame.sprite.Group()
+        self.npc_grp        = pygame.sprite.Group()
         
         # Surfaces chargées lors de load_maps()
         self.background: pygame.Surface | None = None
@@ -80,6 +83,7 @@ class Map:
  
         self.load_wall_group(Map_set['walls_csv'])
         self.spawn_monsters(Map_set['spawn_zone'])
+        self.spawn_npcs(Map_set['spawn_zone'])
         self.spawn_items(Map_set['spawn_zone'])
  
         self.player.rect.x = x
@@ -128,6 +132,21 @@ class Map:
             self.items_group.add(Item(name, x, y))
             res += 1
     
+
+    def spawn_npcs(self, zone):
+        '''Fait apparître des personnages non jouable dans la zone entrée'''
+        x_min, x_max, y_min, y_max = zone
+        res = 0
+        while res < Npcs_nbr:
+            x   = randint(x_min, x_max)
+            y   = randint(y_min, y_max)
+            n = NPC(x, y)
+            # Transmet les limites de la map au npc pour le clamping
+            n.map_width = self.width
+            n.map_height = self.height
+            self.npc_grp.add(n)
+            res += 1
+
     # ------------------------------------------------------------------
     # Update des joueurs + monstres 
     # ------------------------------------------------------------------
@@ -137,3 +156,7 @@ class Map:
     def update_monsters(self):
         for monster in self.all_monsters:
             monster.update_animation_knight()
+    
+    def update_npcs(self):
+        'La classe NPC n\'a pas encore d\'animation'
+        return 
