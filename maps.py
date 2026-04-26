@@ -30,9 +30,10 @@ Map_settings = {
 }
  
 Items_choice     = ['shield', 'heart', 'knife']
+Dialogues_choice = ['npc_1', 'npc_2', 'npc_3']
 Monstre_nbr    = 5
 Items_nbr      = 5
-Npcs_nbr       = 2
+Npcs_nbr       = len(Dialogues_choice)
 WALL_Y_OFFSET = 8
 # ------------------------------------------------------------------
 # Création des murs
@@ -135,12 +136,14 @@ class Map:
 
     def spawn_npcs(self, zone):
         '''Fait apparître des personnages non jouable dans la zone entrée'''
+        # c'est ici où j'attribue les différents dialogues des npcs, j'en donne des différents mais la gestion peut être améliorée
         x_min, x_max, y_min, y_max = zone
         res = 0
         while res < Npcs_nbr:
             x   = randint(x_min, x_max)
             y   = randint(y_min, y_max)
-            n = NPC(x, y, 'npc_1')
+            filename = Dialogues_choice[res]
+            n = NPC(x, y, filename)
             # Transmet les limites de la map au npc pour le clamping
             n.map_width = self.width
             n.map_height = self.height

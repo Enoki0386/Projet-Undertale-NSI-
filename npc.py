@@ -23,6 +23,9 @@ class NPC(pygame.sprite.Sprite): # 'animation.AnimateSprite' est sensé être da
         self.dialogue_index = 0
         self.finished = False
 
+        # Attention : le fichier texte contenant le dialogue doit avoir des lignes de la même longueur
+        # que la 1ère ligne que j'ai mise pour que tout s'affiche sans déborder
+    
     
     def load_dialogue(self, filename):
         '''Méthode destinée à extraire le dialogue d'un fichier texte'''
