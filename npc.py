@@ -18,15 +18,40 @@ class NPC(pygame.sprite.Sprite): # 'animation.AnimateSprite' est sensé être da
         self.WHITE = (255, 255, 255) # -> texte
         self.BROWN = (210, 105, 30) # -> fond
 
+        # dialogue + fonctionnement
+        #self.dialogues = self.load_dialogue(filename)
+        self.dialogue_index = 0
+        self.finished = False
+
     
-    def load_dialogue(filename, lines):
+    def load_dialogue(self, filename):
         '''Méthode destinée à extraire le dialogue d'un fichier texte'''
         with open(f'{filename}.txt', 'r') as f:
-            lignes = f.readlines(lines)
+            lignes = f.readlines()
     
         return lignes
     
-    def load_text_boxes(filename, lines):
-        '''Méthode destinée à créer des boites de dialogues'''
-        lignes = self.load_dialogue(filename, lines)
-        
+    def update_dialogue(self):
+        '''Méthode destinée à défiler le bon dialogue en fonction de la situation'''
+        self.dialogue_index += 1
+
+        if self.dialogue_index >= len(self.dialogues):
+            self.finished = True
+    
+    def draw_dialogue(self, screen, screen_width, screen_height):
+        '''Méthode destinée à afficher les boites de dialogues'''
+        # les boites de dialogues sont en bas de l'écran
+        box_x = 50
+        box_y = screen_height - 150
+        box_w = screen_width - 100
+        box_h = 120
+
+        pygame.draw.rect(screen, self.BROWN, (box_x, box_y, box_w, box_h), border_radius=10)
+        pygame.draw.rect(screen, self.WHITE, (box_x, box_y, box_w, box_h), 2, border_radius=10)
+
+        # texte
+        if self.dialogue_index < len(self.dialogues):
+            font = pygame.font.Font(None, 36)
+            text = self.dialogues[self.dialogue_index].strip()  # .strip() enlève le \n
+            text_surface = font.render(text, True, self.WHITE)
+            screen.blit(text_surface, (box_x + 20, box_y + 40))
