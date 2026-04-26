@@ -482,6 +482,9 @@ class Game01:
         # ── NPC (juste animé) ──────────────────────────────
         for npc in self.map.npc_grp:
             npc.animate()
+        
+        # ── Boss (juste animé) ──────────────────────────────
+        self.map.update_dragon()
 
         player.just_attack = False
  

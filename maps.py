@@ -56,7 +56,7 @@ class Map:
         self.tile_size      = 16
 
         self.player         = Player01()
-        self.boss           = Boss(576, 892)
+        self.boss           = Boss(800, 892)
         self.minigame       = Minigame()
         self.all_monsters   = pygame.sprite.Group()
         self.wall_group     = pygame.sprite.Group()
@@ -165,3 +165,6 @@ class Map:
     def update_npcs(self):
         for npc in self.npc_grp:
             npc.update_animation_npc()
+    
+    def update_dragon(self):
+        self.boss.update_animation_boss()

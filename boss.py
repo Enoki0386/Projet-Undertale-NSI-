@@ -15,9 +15,14 @@ class Boss(animation.AnimateSprite):
     mécanique du jeu, qui est le mini-jeu. Ainsi il n'y a pas d'animations, de collisions encore.'''
     def __init__(self, x, y):
         '''Quelques caractéristiques de l'objet'''
-        super().__init__('dragon_basic_state')
-        self.rect = pygame.Rect(x + (96 - 56) // 2, y + (80 - 60) // 2, 56, 60)
+        super().__init__('dragon_state')
+        w, h = 74, 74
+        self.rect = pygame.Rect(x, y, w, h)
         self.rect.x = x 
         self.rect.y = y
         self.health = 1000
         self.max_health = 1000
+    
+    def update_animation_boss(self):
+        '''Méthode destinée à animer le dragon'''
+        self.animate()

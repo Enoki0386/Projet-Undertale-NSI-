@@ -20,7 +20,7 @@ def load_animation_images(animation, num_frame):
         return []
     
     images = []
-    sprite_sheet = pygame.image.load(f'Sprites/{animation}.png')
+    sprite_sheet = pygame.image.load(path)
     frame_w = sprite_sheet.get_width() // num_frame
     frame_h = sprite_sheet.get_height() 
 
@@ -30,7 +30,7 @@ def load_animation_images(animation, num_frame):
         image.blit(sprite_sheet, (0, 0), (x, 0, frame_w, frame_h))
         image.set_colorkey([0, 0, 0])
         images.append(image)
-
+    
     return images
 # ------------------------------------------------------------------
 # Repertoire global :
