@@ -140,7 +140,7 @@ class Map:
         while res < Npcs_nbr:
             x   = randint(x_min, x_max)
             y   = randint(y_min, y_max)
-            n = NPC(x, y)
+            n = NPC(x, y, 'npc_1')
             # Transmet les limites de la map au npc pour le clamping
             n.map_width = self.width
             n.map_height = self.height

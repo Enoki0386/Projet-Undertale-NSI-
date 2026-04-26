@@ -3,7 +3,7 @@ import animation
 from animation import animations
 
 class NPC(pygame.sprite.Sprite): # 'animation.AnimateSprite' est sensé être dans les parenthèses pour l'animation. Ainsi pour engendrer les boites de dialogues
-    def __init__(self, x, y):    # j'ai choisi de garder temporairement la classe Sprite. Lorsque l'animation sera requise oubliez pas de mettre l'animation dans le super
+    def __init__(self, x, y, filename):    # j'ai choisi de garder temporairement la classe Sprite. Lorsque l'animation sera requise oubliez pas de mettre l'animation dans le super
         super().__init__()
 
         # l'image est sensée être animée, cependant en guise de solution temporaire, elle sera une surface seulement
@@ -19,19 +19,19 @@ class NPC(pygame.sprite.Sprite): # 'animation.AnimateSprite' est sensé être da
         self.BROWN = (210, 105, 30) # -> fond
 
         # dialogue + fonctionnement
-        #self.dialogues = self.load_dialogue(filename)
+        self.dialogues = self.load_dialogue(filename)
         self.dialogue_index = 0
         self.finished = False
 
     
     def load_dialogue(self, filename):
         '''Méthode destinée à extraire le dialogue d'un fichier texte'''
-        with open(f'{filename}.txt', 'r') as f:
+        with open(f'dialogues/{filename}.txt', 'r') as f:
             lignes = f.readlines()
     
         return lignes
     
-    def update_dialogue(self):
+    def next_dialogue(self):
         '''Méthode destinée à défiler le bon dialogue en fonction de la situation'''
         self.dialogue_index += 1
 

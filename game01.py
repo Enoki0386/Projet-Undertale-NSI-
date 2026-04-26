@@ -19,6 +19,7 @@ class Game01:
         self.state              = 'exploration'
         self.minigame_active    = False
         self.objects            = {}
+        self.current_npc        = None
 
         pygame.display.set_caption('Undertale')
         self.screen     = pygame.display.set_mode((self.width, self.height))
@@ -192,11 +193,41 @@ class Game01:
         if self.map.minigame.finished:
             self.state = 'exploration'
             self.map.minigame.finished = True
+    
+    # ------------------------------------------------------------------ 
+    #  BOITE DE DIALOGUE                                                            
+    # ------------------------------------------------------------------
 
+    def update_dialogue(self, cam_x, cam_y):
+        '''Méthode destinée à mettre à jour les boites de dialogues'''
+        # j'affiche l'arrière plan mais gelé
+        player = self.map.player
+ 
+        # Affichage des couches de la carte
+        self.screen.blit(self.map.background, (-cam_x, -cam_y))
+        self.screen.blit(self.map.path,       (-cam_x, -cam_y))
+
+        # Affichage des npcs
+        for npc in self.map.npc_grp:
+            self.screen.blit(npc.image, (npc.rect.x - cam_x, npc.rect.y - cam_y))
+        
+        # Affichage du joueur (toujours centré à l'écran)
+        self.screen.blit(
+            player.image,
+            (self.width  // 2 - player.image.get_width()  // 2,
+             self.height // 2 - player.image.get_height() // 2)
+        )
+ 
+        # Texture des murs (par-dessus pour masquer les entités derrière)
+        self.screen.blit(self.map.walls, (-cam_x, -cam_y))
+
+        # je crée les boites de dialogues
+        self.current_npc.draw_dialogue(self.screen, self.width, self.height)
 
     # ------------------------------------------------------------------ 
     #  Main boucle                                                       
     # ------------------------------------------------------------------ 
+
     def run(self):
         clock = pygame.time.Clock()
         running = True
@@ -240,9 +271,17 @@ class Game01:
 
                         if event.key == pygame.K_e:
                             self.map.player.inventor = not self.map.player.inventor
+                        
+
+                        for npc in self.map.npc_grp:
+                            player = self.map.player
+                            if event.key == pygame.K_f and abs(player.rect.x - npc.rect.x) < 50 and abs(player.rect.y - npc.rect.y) < 50:
+                                self.current_npc = npc
+                                self.state = 'dialogue'
+                                break
                     
 
-                    if self.state == 'minigame':
+                    elif self.state == 'minigame':
                         if event.key == pygame.K_ESCAPE:
                             self.state = 'exploration'
 
@@ -265,7 +304,14 @@ class Game01:
                             else:
                                 self.map.minigame.COLOR = (255, 0, 0)
                                 self.map.minigame.finished = True
+                    
 
+                    elif self.state == 'dialogue':
+                        if event.key == pygame.K_SPACE:
+                            self.current_npc.next_dialogue()
+                            if self.current_npc.finished:
+                                self.state = 'exploration'
+                                
 
                 elif event.type == pygame.KEYUP:                # si la touche n'est pas appuyée
                     self.map.player.pressed[event.key] = False  # elle est assignée à False
@@ -294,6 +340,9 @@ class Game01:
             # -- État mini-jeu --
             elif self.state == 'minigame':
                 self._update_minigame()
+            
+            elif self.state == 'dialogue':
+                self.update_dialogue(cam_x, cam_y)
  
             pygame.display.flip()
             clock.tick(60) # nbr de frames par sec
