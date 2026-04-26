@@ -31,6 +31,7 @@ Map_settings = {
  
 Items_choice     = ['shield', 'heart', 'knife']
 Dialogues_choice = ['npc_1', 'npc_2', 'npc_3']
+Sprites_choice   = ['npc1_front', 'npc2_front', 'npc3_front']
 Monstre_nbr    = 5
 Items_nbr      = 5
 Npcs_nbr       = len(Dialogues_choice)
@@ -143,7 +144,8 @@ class Map:
             x   = randint(x_min, x_max)
             y   = randint(y_min, y_max)
             filename = Dialogues_choice[res]
-            n = NPC(x, y, filename)
+            sprite = Sprites_choice[res]
+            n = NPC(x, y, filename, sprite)
             # Transmet les limites de la map au npc pour le clamping
             n.map_width = self.width
             n.map_height = self.height
@@ -161,5 +163,5 @@ class Map:
             monster.update_animation_knight()
     
     def update_npcs(self):
-        'La classe NPC n\'a pas encore d\'animation'
-        return 
+        for npc in self.npc_grp:
+            npc.update_animation_npc()

@@ -2,15 +2,13 @@ import pygame
 import animation
 from animation import animations
 
-class NPC(pygame.sprite.Sprite): # 'animation.AnimateSprite' est sensé être dans les parenthèses pour l'animation. Ainsi pour engendrer les boites de dialogues
-    def __init__(self, x, y, filename):    # j'ai choisi de garder temporairement la classe Sprite. Lorsque l'animation sera requise oubliez pas de mettre l'animation dans le super
-        super().__init__()
+class NPC(animation.AnimateSprite): # 'animation.AnimateSprite' est sensé être dans les parenthèses pour l'animation. Ainsi pour engendrer les boites de dialogues
+    def __init__(self, x, y, filename, sprite):    # j'ai choisi de garder temporairement la classe Sprite. Lorsque l'animation sera requise oubliez pas de mettre l'animation dans le super
+        super().__init__(sprite)
 
-        # l'image est sensée être animée, cependant en guise de solution temporaire, elle sera une surface seulement
-        self.image = pygame.Surface((50, 60))
-        self.image.fill((255, 255, 255))
-
-        self.rect = self.image.get_rect() 
+        # rectangle du joueur
+        w, h = 32, 50
+        self.rect = pygame.Rect(x, y, w, h)
         self.rect.x = x
         self.rect.y = y 
 
@@ -24,9 +22,9 @@ class NPC(pygame.sprite.Sprite): # 'animation.AnimateSprite' est sensé être da
         self.finished = False
 
         # Attention : le fichier texte contenant le dialogue doit avoir des lignes de la même longueur
-        # que la 1ère ligne que j'ai mise pour que tout s'affiche sans déborder
+        # que la 1ère ligne que j'ai mise dans npc_1 (dialogue) pour que tout s'affiche sans déborder de la boite
     
-    
+
     def load_dialogue(self, filename):
         '''Méthode destinée à extraire le dialogue d'un fichier texte'''
         with open(f'dialogues/{filename}.txt', 'r') as f:
@@ -58,3 +56,7 @@ class NPC(pygame.sprite.Sprite): # 'animation.AnimateSprite' est sensé être da
             text = self.dialogues[self.dialogue_index].strip()  # .strip() enlève le \n
             text_surface = font.render(text, True, self.WHITE)
             screen.blit(text_surface, (box_x + 20, box_y + 40))
+    
+    def update_animation_npc(self):
+        '''Méthode visant à animer le npc'''
+        pass

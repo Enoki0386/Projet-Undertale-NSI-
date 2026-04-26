@@ -479,6 +479,10 @@ class Game01:
                 self.state = 'minigame'
                 self.minigame_active = True
 
+        # ── NPC (juste animé) ──────────────────────────────
+        for npc in self.map.npc_grp:
+            npc.animate()
+
         player.just_attack = False
  
  
