@@ -21,6 +21,9 @@ class Game01:
         self.objects            = {}
         self.current_npc        = None
 
+        self.shield             = None
+        self.shield_on          = self.check_inventory(self.shield) # on regarde si le bouclier est équipé
+
         pygame.display.set_caption('Undertale')
         self.screen     = pygame.display.set_mode((self.width, self.height))
         self.map        = Map()
@@ -151,6 +154,14 @@ class Game01:
  
             if slot[1] and slot[2] is not None:
                 self.screen.blit(slot[2], rect)
+    
+    def check_inventory(self, item):
+        '''Cherche un object dans l'inventaire'''
+        for position in self.objects:
+            if self.objects[position][3] == item.name:
+                return True
+            else:
+                return False
 
     # ------------------------------------------------------------------ 
     #  MINI-JEU                                                            
@@ -237,7 +248,7 @@ class Game01:
             # Camera centré sur le joueur 
             cam_x = self.map.player.rect.centerx - self.width    // 2
             cam_y = self.map.player.rect.centery - self.height   // 2
-
+            
             # --Événements--
             for event in pygame.event.get():        #.get() est un tuple de sortie de jeu
                 if event.type == pygame.QUIT:       # si l'événement est une sortie de jeu
@@ -343,6 +354,18 @@ class Game01:
             
             elif self.state == 'dialogue':
                 self.update_dialogue(cam_x, cam_y)
+            
+
+            for item in self.map.items_group:
+                if item.name == 'shield':
+                    self.shield = item
+            
+            if self.shield_on == True:
+                self.map.player.protection = 25
+                self.shield_on = False
+            
+            self.map.player.main_health_bar(self.screen, 670)
+            self.map.player.protection_bar(self.screen, 720)
  
             pygame.display.flip()
             clock.tick(60) # nbr de frames par sec

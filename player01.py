@@ -38,6 +38,9 @@ class Player01(animation.AnimateSprite):
         self.velocity       = 5             # vitesse de déplacement
         self.direction      = 'right'       # direction par defaut au lancement du jeu
 
+        self.protection = 0                 # armure du joueur (initialement nulle)
+        self.max_protection = 25            # avec un bouclier
+
         self.attacking      = False         # permet la gestion des attaques dans la classe Game01 du fichier game01.py
         self.just_attack    = False
         self.moving         = False         # True si une touche de déplacement est pressée (pour idle)
@@ -127,6 +130,18 @@ class Player01(animation.AnimateSprite):
         pygame.draw.rect(surface, (200, 0, 0),    (bx, by, self.max_health, 6))
         pygame.draw.rect(surface, (80, 210, 40),  (bx, by, max(0, self.health), 6))
         pygame.draw.rect(surface, (255, 255, 255),(bx, by, self.max_health, 6), 1)
+    
+    def main_health_bar(self, surface, screen_height):
+        '''Affiche une grande barre de vie en bas à gauche de l'écran'''
+        pygame.draw.rect(surface, (200, 0, 0), (20, screen_height - 60, self.max_health * 8, 40))
+        pygame.draw.rect(surface, (80, 210, 40), (20, screen_height - 60, max(0, self.health) * 8, 40))
+        pygame.draw.rect(surface, (255, 255, 255), (20, screen_height - 60, self.max_health * 8, 40), 1)
+    
+    def protection_bar(self, surface, screen_height):
+        '''Affiche une barre mesurant le niveau d'armure du joueur (initialement nulle, s'augmente avec un bouclier)'''
+        pygame.draw.rect(surface, (201, 229, 255), (20, screen_height - 60, self.max_protection * 8, 40))
+        pygame.draw.rect(surface, (0, 139, 252), (20, screen_height - 60, max(0, self.protection) * 8, 40))
+        pygame.draw.rect(surface, (255, 255, 255), (20, screen_height - 60, self.max_protection * 8, 40), 1)           
  
     def damage(self, amount: int) -> None:
         self.health = max(0, self.health - amount)
