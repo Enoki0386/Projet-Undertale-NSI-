@@ -19,6 +19,7 @@ class Game01:
 
         self.state              = 'exploration'
         self.minigame_active    = False
+        self.list_minigame      = ['1', '2', 'player', '4'] # le mini jeu 3 est celui du joueur, son système d'attaque
         self.objects            = {}
         self.current_npc        = None
 
@@ -237,7 +238,7 @@ class Game01:
     #  Main boucle                                                       
     # ------------------------------------------------------------------ 
 
-    def run(self):
+    def run(self, index):
         clock = pygame.time.Clock()
         running = True
 
@@ -297,18 +298,20 @@ class Game01:
                     elif self.state == 'minigame':
                         if event.key == pygame.K_ESCAPE:
                             self.state = 'exploration'
-
-                        if event.key == pygame.K_LEFT:
-                            self.map.minigame.move_case_left()
-
-                        elif event.key == pygame.K_RIGHT:
-                            self.map.minigame.move_case_right()
                         
-                        elif event.key == pygame.K_UP:
-                            self.map.minigame.move_case_up()
-                        
-                        elif event.key == pygame.K_DOWN:
-                            self.map.minigame.move_case_down()
+                        if self.list_minigame[index] == '2':
+
+                            if event.key == pygame.K_LEFT:
+                                self.map.minigame.move_case_left()
+
+                            elif event.key == pygame.K_RIGHT:
+                                self.map.minigame.move_case_right()
+                            
+                            elif event.key == pygame.K_UP:
+                                self.map.minigame.move_case_up()
+                            
+                            elif event.key == pygame.K_DOWN:
+                                self.map.minigame.move_case_down()
                         
 
                         if event.key == pygame.K_SPACE:
@@ -369,7 +372,7 @@ class Game01:
  
             # -- État mini-jeu --
             elif self.state == 'minigame':
-                self._update_minigame()
+                self._update_minigame(index)
                 self.map.player.attack_points(self.screen, 660)
                 self.map.player.main_health_bar(self.screen, 670)
                 self.map.player.protection_bar(self.screen, 720)
@@ -534,19 +537,30 @@ class Game01:
     #  UPDATE MINI-JEU
     # ═════════════════════════════════════════════════════════════════════════
  
-    def _update_minigame(self) -> None:
+    def _update_minigame(self, index) -> None:
         """Délègue l'affichage et la logique au mini-jeu, gère les contrôles."""
 
-        if self.combat.turn == 'minigame':
-            self.launch_minigame_player(self.screen)
-        
-        elif self.combat.turn == 'enemy_turn':
-            self.launch_minigame(self.screen)
+        minigame_chosed = self.list_minigame[index]
 
-        if self.map.player.pressed.get(pygame.K_LEFT):
-            self.map.minigame.move_left()
-        elif self.map.player.pressed.get(pygame.K_RIGHT):
-            self.map.minigame.move_right()
+        if self.combat.turn == 'enemy_turn':
+            
+            if minigame_chosed == '1':
+                self.launch_minigame(self.screen)
+
+                if self.map.player.pressed.get(pygame.K_LEFT):
+                    self.map.minigame.move_left()
+
+                elif self.map.player.pressed.get(pygame.K_RIGHT):
+                    self.map.minigame.move_right()
+            
+            elif minigame_chosed == '2':
+                self.launch_minigame2
+            
+            elif minigame_chosed == '4':
+                self.launch_minigame_4
+        
+        elif self.combat.turn == 'minigame':
+            self.launch_minigame_player(self.screen)
 
 
     # ═════════════════════════════════════════════════════════════════════════
@@ -557,6 +571,10 @@ class Game01:
         # rendu du jeu en arrière-plan gelé
         self.screen.blit(self.map.background, (-cam_x, -cam_y))
         self.screen.blit(self.map.path, (-cam_x, -cam_y))
+
+        # Affichage du boss
+        self.screen.blit(self.map.boss.image, (self.map.boss.rect.x - cam_x, self.map.boss.rect.y - cam_y))
+
         self.screen.blit(self.map.walls, (-cam_x, -cam_y))
         
         # rendu du combat
