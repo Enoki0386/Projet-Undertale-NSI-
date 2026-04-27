@@ -72,10 +72,10 @@ class Minigame(pygame.sprite.Sprite):
         # caractéristiques du rectangle jouable par le joueur
         self.movement = 5
         self.direction = 'right'
-        self.POS_X = self.x + 100
-        self.POS_Y = self.y + 200
         self.WIDTH_RECT = 50
         self.HEIGHT_RECT = 30
+        self.POS_X = self.x
+        self.POS_Y = (self.y + (self.height / 2)) - (self.HEIGHT_RECT / 2)
         self.COLOR = (0, 0, 0)
 
         # gestion des projectiles
@@ -136,10 +136,10 @@ class Minigame(pygame.sprite.Sprite):
     def player_turn_minigame(self, screen):
 
         # mini jeu
-        middle_x = (self.x + self.width) / 2
+        middle_x = (self.x + (self.width + self.x)) / 2
         pygame.draw.rect(screen, self.COLOR, (self.x, self.y, self.width, self.height), border_radius=10)
         pygame.draw.rect(screen, (255, 255, 255), (self.x, self.y, self.width, self.height), 2, border_radius=10)
-        pygame.draw.line(screen, (255, 255, 255), (middle_x, self.y), (middle_x, self.height), 10)
+        pygame.draw.line(screen, (255, 255, 255), (middle_x, self.y), (middle_x, self.height + self.y), 1)
 
         # RECT où le joueur doit interragir avec dans le mini jeu (pas le curseur) pour gagner
         RECT = pygame.draw.rect(screen, (255, 255, 255), (self.POS_X, self.POS_Y, self.WIDTH_RECT, self.HEIGHT_RECT), border_radius=10)
@@ -149,7 +149,7 @@ class Minigame(pygame.sprite.Sprite):
 
         self.POS_X += self.movement * (1 if self.direction == 'right' else -1)
 
-        if self.POS_X >= self.width:
+        if self.POS_X + self.WIDTH_RECT >= self.width + self.x:
             self.direction = 'left'
             
         elif self.POS_X <= self.x:
@@ -159,8 +159,8 @@ class Minigame(pygame.sprite.Sprite):
     def update_player_minigame(self):
 
         self.RECT_movements()
-        middle = (self.x + self.width) / 2
-
+        middle = (self.x + (self.width + self.x)) / 2
+        
         if middle - 50 <= self.POS_X <= middle + 50:
             self.COLOR = (0, 128, 0)
 
