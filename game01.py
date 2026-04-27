@@ -1,6 +1,7 @@
 import pygame
 pygame.init()
 from maps import Map
+from combat_system import Combat
 # ------------------------------------------------------------------ 
 #  Init + touches de deplacements                                          
 # ------------------------------------------------------------------ 
@@ -21,8 +22,7 @@ class Game01:
         self.objects            = {}
         self.current_npc        = None
 
-        self.shield             = None
-        self.shield_on          = self.check_inventory(self.shield) # on regarde si le bouclier est équipé
+        self.combat             = None # système de combat off (s'active dans le run)
 
         pygame.display.set_caption('Undertale')
         self.screen     = pygame.display.set_mode((self.width, self.height))
@@ -135,6 +135,12 @@ class Game01:
             if not slot[1]:
                 slot[1], slot[2], slot[3] = True, item.image, item.name
                 break
+        
+        if item.name == 'shield':
+            self.map.player.protection = self.map.player.max_protection
+        
+        if item.name == 'knife':
+            self.map.player.power += 5
 
     def inventory(self, mx, my):
         overlay = pygame.Surface((self.width, self.height))
@@ -155,14 +161,6 @@ class Game01:
             if slot[1] and slot[2] is not None:
                 self.screen.blit(slot[2], rect)
     
-    def check_inventory(self, item):
-        '''Cherche un object dans l'inventaire'''
-        for position in self.objects:
-            if self.objects[position][3] == item.name:
-                return True
-            else:
-                return False
-
     # ------------------------------------------------------------------ 
     #  MINI-JEU                                                            
     # ------------------------------------------------------------------ 
@@ -274,9 +272,13 @@ class Game01:
                         if event.key == pygame.K_f:
                             for item in self.map.items_group:
                                 if abs(self.map.player.rect.x - item.rect.x) < 25 and \
-                                abs(self.map.player.rect.y - item.rect.y) < 25:      #pour éviter d'etre trop long on met un \
-                                    self.put_in_inventory(item)
-                                    item.kill()
+                                abs(self.map.player.rect.y - item.rect.y) < 25:     #pour éviter d'etre trop long on met un \
+                                    if item.name == 'heart':
+                                        self.map.player.health = min(self.map.player.max_health, self.map.player.health + 10) # évite de dépasser les PV max
+                                        item.kill()
+                                    else:
+                                        self.put_in_inventory(item)
+                                        item.kill()
                                     break
                         
 
@@ -322,6 +324,15 @@ class Game01:
                             self.current_npc.next_dialogue()
                             if self.current_npc.finished:
                                 self.state = 'exploration'
+
+
+                    elif self.state == 'combat':
+                        if event.key == pygame.K_RIGHT:
+                            self.combat.selected_action = (self.combat.selected_action + 1) % len(self.combat.actions)
+                        elif event.key == pygame.K_LEFT:
+                            self.combat.selected_action = (self.combat.selected_action - 1) % len(self.combat.actions)
+                        elif event.key == pygame.K_SPACE:
+                            self.combat.confirm_action()
                                 
 
                 elif event.type == pygame.KEYUP:                # si la touche n'est pas appuyée
@@ -347,25 +358,25 @@ class Game01:
             # -- État exploration --
             if self.state == 'exploration':
                 self.update_exploration(cam_x, cam_y)
+                self.map.player.attack_points(self.screen, 660)
+                self.map.player.main_health_bar(self.screen, 670)
+                self.map.player.protection_bar(self.screen, 720)
  
             # -- État mini-jeu --
             elif self.state == 'minigame':
                 self._update_minigame()
+                self.map.player.attack_points(self.screen, 660)
+                self.map.player.main_health_bar(self.screen, 670)
+                self.map.player.protection_bar(self.screen, 720)
             
+            # -- Etat dialogue --
             elif self.state == 'dialogue':
                 self.update_dialogue(cam_x, cam_y)
             
-
-            for item in self.map.items_group:
-                if item.name == 'shield':
-                    self.shield = item
+            # -- Etat combat --
+            elif self.state == 'combat':
+                self.update_combat(cam_x, cam_y)
             
-            if self.shield_on == True:
-                self.map.player.protection = 25
-                self.shield_on = False
-            
-            self.map.player.main_health_bar(self.screen, 670)
-            self.map.player.protection_bar(self.screen, 720)
  
             pygame.display.flip()
             clock.tick(60) # nbr de frames par sec
@@ -495,12 +506,14 @@ class Game01:
             if player.just_attack and \
                abs(player.rect.centerx - monster.rect.centerx) < 55 and \
                abs(player.rect.centery - monster.rect.centery) < 55:
-                monster.damage(10)
+                monster.damage(self.map.player.power)
 
-            # permet de passer en mini jeu lorsqu'on s'approche du boss
+            # permet de passer en mini jeu lorsqu'on s'approche du boss / CHANGEMENT ON PASSE EN COMBAT
             if not self.minigame_active and (abs(player.rect.centerx - self.map.boss.rect.centerx) < 50 and abs(player.rect.centery - self.map.boss.rect.centery) < 50):
-                self.state = 'minigame'
-                self.minigame_active = True
+                self.state = 'combat'
+                self.combat = Combat(self.map.player, self.map.boss)
+                #self.state = 'minigame'
+                #self.minigame_active = True
 
         # ── NPC (juste animé) ──────────────────────────────
         for npc in self.map.npc_grp:
@@ -525,3 +538,20 @@ class Game01:
         elif self.map.player.pressed.get(pygame.K_RIGHT):
             self.map.minigame.move_right()
         '''
+
+    # ═════════════════════════════════════════════════════════════════════════
+    #  UPDATE COMBAT
+    # ═════════════════════════════════════════════════════════════════════════
+    
+    def update_combat(self, cam_x, cam_y):
+        # rendu du jeu en arrière-plan gelé
+        self.screen.blit(self.map.background, (-cam_x, -cam_y))
+        self.screen.blit(self.map.path, (-cam_x, -cam_y))
+        self.screen.blit(self.map.walls, (-cam_x, -cam_y))
+        
+        # rendu du combat
+        self.combat.draw_actions(self.screen, self.width, self.height)
+        
+        if self.combat.finished:
+            self.state = 'exploration'
+            self.combat = None

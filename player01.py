@@ -38,6 +38,8 @@ class Player01(animation.AnimateSprite):
         self.velocity       = 5             # vitesse de déplacement
         self.direction      = 'right'       # direction par defaut au lancement du jeu
 
+        self.power          = 10            # points d'attaque du joueur
+
         self.protection = 0                 # armure du joueur (initialement nulle)
         self.max_protection = 25            # avec un bouclier
 
@@ -141,7 +143,21 @@ class Player01(animation.AnimateSprite):
         '''Affiche une barre mesurant le niveau d'armure du joueur (initialement nulle, s'augmente avec un bouclier)'''
         pygame.draw.rect(surface, (201, 229, 255), (20, screen_height - 60, self.max_protection * 8, 40))
         pygame.draw.rect(surface, (0, 139, 252), (20, screen_height - 60, max(0, self.protection) * 8, 40))
-        pygame.draw.rect(surface, (255, 255, 255), (20, screen_height - 60, self.max_protection * 8, 40), 1)           
+        pygame.draw.rect(surface, (255, 255, 255), (20, screen_height - 60, self.max_protection * 8, 40), 1)     
+
+    def attack_points(self, surface, screen_height):
+        '''Affiche les points d'attaques du joueur'''
+        font = pygame.font.Font(None, 36)
+        pygame.draw.rect(surface, (50, 50, 50), (20, screen_height - 140, 50, 50), border_radius=5)
+        pygame.draw.rect(surface, (255, 255, 255), (20, screen_height - 140, 50, 50), 1, border_radius=5)
+        atk_text = font.render(str(self.power), True, (255, 255, 255))
+        surface.blit(atk_text, (35, screen_height - 120))
  
     def damage(self, amount: int) -> None:
-        self.health = max(0, self.health - amount)
+        if self.protection > 0:
+            self.protection -= amount
+            if self.protection < 0:
+                self.health += self.protection
+                self.protection = 0
+        else:
+            self.health = max(0, self.health - amount)

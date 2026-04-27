@@ -33,7 +33,7 @@ Items_choice     = ['shield', 'heart', 'knife']
 Dialogues_choice = ['npc_1', 'npc_2', 'npc_3']
 Sprites_choice   = ['npc1_front', 'npc2_front', 'npc3_front']
 Monstre_nbr    = 5
-Items_nbr      = 5
+Items_nbr      = len(Items_choice)
 Npcs_nbr       = len(Dialogues_choice)
 WALL_Y_OFFSET = 8
 # ------------------------------------------------------------------
