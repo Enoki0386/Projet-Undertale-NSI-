@@ -19,7 +19,7 @@ class Game01:
 
         self.state              = 'exploration'
         self.minigame_active    = False
-        self.list_minigame      = ['1', '2', 'player', '4'] # le mini jeu 3 est celui du joueur, son système d'attaque
+        self.list_minigame      = ['1', '2', '4'] # le mini jeu 3 est celui du joueur, son système d'attaque (pas la car je separe les mini jeux des boss la)
         self.index              = None # l'index qui permet de choisir le mini jeu
         self.objects            = {}
         self.current_npc        = None
@@ -167,32 +167,18 @@ class Game01:
     #  MINI-JEU                                                            
     # ------------------------------------------------------------------ 
     def launch_minigame(self, screen):
-
         self.map.minigame.draw_mini_game(screen)
         self.map.minigame.update_projectile()
-
-        if self.map.minigame.finished:
-            self.state = 'exploration'
-            self.map.minigame.finished = False
-            self.map.minigame.projectiles.empty()
     
 
     def launch_minigame2(self, screen):
         self.map.minigame.draw_minigame_2(screen)
         self.map.minigame.update_minigame_2()
-
-        if self.map.minigame.finished:
-            self.state = 'exploration'
-            self.map.minigame.finished = False
     
 
     def launch_minigame_player(self, screen):
         self.map.minigame.player_turn_minigame(screen)
         self.map.minigame.update_player_minigame()
-
-        if self.map.minigame.finished:
-            self.state = 'exploration'
-            self.map.minigame.finished = False
     
 
     def launch_minigame_4(self, screen):
@@ -201,9 +187,6 @@ class Game01:
         self.map.minigame.update_minigame_4()
         self.map.minigame.get_pos_cursor()
 
-        if self.map.minigame.finished:
-            self.state = 'exploration'
-            self.map.minigame.finished = True
     
     # ------------------------------------------------------------------ 
     #  BOITE DE DIALOGUE                                                            
@@ -297,30 +280,34 @@ class Game01:
                     
 
                     elif self.state == 'minigame':
+        
                         if event.key == pygame.K_ESCAPE:
                             self.state = 'exploration'
                         
-                        if self.list_minigame[self.index] == '2':
+                        if self.combat.turn == 'enemy_turn':
+                            if self.list_minigame[self.index] == '2':
 
-                            if event.key == pygame.K_LEFT:
-                                self.map.minigame.move_case_left()
+                                if event.key == pygame.K_LEFT:
+                                    self.map.minigame.move_case_left()
 
-                            elif event.key == pygame.K_RIGHT:
-                                self.map.minigame.move_case_right()
-                            
-                            elif event.key == pygame.K_UP:
-                                self.map.minigame.move_case_up()
-                            
-                            elif event.key == pygame.K_DOWN:
-                                self.map.minigame.move_case_down()
+                                elif event.key == pygame.K_RIGHT:
+                                    self.map.minigame.move_case_right()
+                                
+                                elif event.key == pygame.K_UP:
+                                    self.map.minigame.move_case_up()
+                                
+                                elif event.key == pygame.K_DOWN:
+                                    self.map.minigame.move_case_down()
                         
+                        
+                        elif self.combat.turn == 'minigame':
 
-                        if event.key == pygame.K_SPACE:
-                            if self.map.minigame.COLOR == (0, 128, 0):
-                                self.map.minigame.finished = True
-                            else:
-                                self.map.minigame.COLOR = (255, 0, 0)
-                                self.map.minigame.finished = True
+                            if event.key == pygame.K_SPACE:
+                                if self.map.minigame.COLOR == (0, 128, 0):
+                                    self.map.minigame.finished = True
+                                else:
+                                    self.map.minigame.COLOR = (255, 0, 0)
+                                    self.map.minigame.finished = True
                     
 
                     elif self.state == 'dialogue':
@@ -571,13 +558,23 @@ class Game01:
                     self.map.minigame.move_right()
             
             elif minigame_chosed == '2':
-                self.launch_minigame2
+                self.launch_minigame2(self.screen)
             
             elif minigame_chosed == '4':
-                self.launch_minigame_4
+                self.launch_minigame_4(self.screen)
         
-        elif self.combat.turn == 'minigame':
+
+        elif self.combat.turn == 'minigame':  
             self.launch_minigame_player(self.screen)
+
+            if self.map.minigame.finished:
+                if self.map.minigame.COLOR == (0, 128, 0): # win
+                    self.combat.enemy.damage(self.map.player.power)
+
+                self.combat.turn = 'enemy_turn'
+                self.map.minigame.finished = False
+                self.map.minigame.POS_X = self.map.minigame.x
+                
 
 
     # ═════════════════════════════════════════════════════════════════════════
@@ -599,6 +596,7 @@ class Game01:
         # rendu du combat
         self.combat.draw_actions(self.screen, self.width, self.height)
         
+
         if self.combat.finished:
             self.state = 'exploration'
             self.combat = None

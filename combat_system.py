@@ -47,3 +47,4 @@ class Combat:
         
         elif self.actions[self.selected_action] == 'Objet':
             pass  # à faire plus tard
+    

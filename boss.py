@@ -22,10 +22,14 @@ class Boss(animation.AnimateSprite):
         self.rect.y = y
         self.health = 1000
         self.max_health = 1000
+        self.attack = 10
     
     def update_animation_boss(self):
         '''Méthode destinée à animer le dragon'''
         self.animate()
+
+    def damage(self, amount):
+        self.health = max(0, self.health - amount)
 
 
 class Samurai(animation.AnimateSprite):
@@ -40,10 +44,14 @@ class Samurai(animation.AnimateSprite):
         self.rect.y = y
         self.health = 1000
         self.max_health = 1000
+        self.attack = 10
     
     def update_animation_samurai(self):
         '''Méthode destinée à animer le dragon'''
         self.animate()
+
+    def damage(self, amount):
+        self.health = max(0, self.health - amount)
 
 
 class Ghost(animation.AnimateSprite):
@@ -58,7 +66,11 @@ class Ghost(animation.AnimateSprite):
         self.rect.y = y
         self.health = 1000
         self.max_health = 1000
+        self.attack = 10
     
     def update_animation_ghost(self):
         '''Méthode destinée à animer le dragon'''
         self.animate()
+    
+    def damage(self, amount):
+        self.health = max(0, self.health - amount)
