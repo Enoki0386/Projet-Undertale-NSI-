@@ -333,7 +333,12 @@ class Game01:
                             self.combat.selected_action = (self.combat.selected_action - 1) % len(self.combat.actions)
                         elif event.key == pygame.K_SPACE:
                             self.combat.confirm_action()
-                                
+                            
+                            if self.combat.result == 'flee':
+                                self.state = 'exploration'
+                            else:
+                                self.state = 'minigame'
+              
 
                 elif event.type == pygame.KEYUP:                # si la touche n'est pas appuyée
                     self.map.player.pressed[event.key] = False  # elle est assignée à False
@@ -531,13 +536,18 @@ class Game01:
  
     def _update_minigame(self) -> None:
         """Délègue l'affichage et la logique au mini-jeu, gère les contrôles."""
-        self.launch_minigame_4(self.screen)
-        '''
+
+        if self.combat.turn == 'minigame':
+            self.launch_minigame_player(self.screen)
+        
+        elif self.combat.turn == 'enemy_turn':
+            self.launch_minigame(self.screen)
+
         if self.map.player.pressed.get(pygame.K_LEFT):
             self.map.minigame.move_left()
         elif self.map.player.pressed.get(pygame.K_RIGHT):
             self.map.minigame.move_right()
-        '''
+
 
     # ═════════════════════════════════════════════════════════════════════════
     #  UPDATE COMBAT
