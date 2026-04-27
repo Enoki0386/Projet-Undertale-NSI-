@@ -7,6 +7,8 @@ from knight   import Knight
 from item     import Item
 from minigame import Minigame
 from boss     import Boss
+from boss     import Samurai
+from boss     import Ghost
 from npc      import NPC
  
 # ------------------------------------------------------------------
@@ -57,6 +59,8 @@ class Map:
 
         self.player         = Player01()
         self.boss           = Boss(800, 892)
+        self.samurai        = Samurai(200, 892)
+        self.ghost          = Ghost(500, 892)
         self.minigame       = Minigame()
         self.all_monsters   = pygame.sprite.Group()
         self.wall_group     = pygame.sprite.Group()
@@ -168,3 +172,9 @@ class Map:
     
     def update_dragon(self):
         self.boss.update_animation_boss()
+    
+    def update_samurai(self):
+        self.samurai.update_animation_samurai()
+    
+    def update_ghost(self):
+        self.ghost.update_animation_ghost()

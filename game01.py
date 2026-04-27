@@ -20,6 +20,7 @@ class Game01:
         self.state              = 'exploration'
         self.minigame_active    = False
         self.list_minigame      = ['1', '2', 'player', '4'] # le mini jeu 3 est celui du joueur, son système d'attaque
+        self.index              = None # l'index qui permet de choisir le mini jeu
         self.objects            = {}
         self.current_npc        = None
 
@@ -238,7 +239,7 @@ class Game01:
     #  Main boucle                                                       
     # ------------------------------------------------------------------ 
 
-    def run(self, index):
+    def run(self):
         clock = pygame.time.Clock()
         running = True
 
@@ -299,7 +300,7 @@ class Game01:
                         if event.key == pygame.K_ESCAPE:
                             self.state = 'exploration'
                         
-                        if self.list_minigame[index] == '2':
+                        if self.list_minigame[self.index] == '2':
 
                             if event.key == pygame.K_LEFT:
                                 self.map.minigame.move_case_left()
@@ -372,7 +373,7 @@ class Game01:
  
             # -- État mini-jeu --
             elif self.state == 'minigame':
-                self._update_minigame(index)
+                self._update_minigame(self.index)
                 self.map.player.attack_points(self.screen, 660)
                 self.map.player.main_health_bar(self.screen, 670)
                 self.map.player.protection_bar(self.screen, 720)
@@ -412,8 +413,10 @@ class Game01:
         for npc in self.map.npc_grp:
             self.screen.blit(npc.image, (npc.rect.x - cam_x, npc.rect.y - cam_y))
  
-        # Affichage du boss
+        # Affichage des boss
         self.screen.blit(self.map.boss.image, (self.map.boss.rect.x - cam_x, self.map.boss.rect.y - cam_y))
+        self.screen.blit(self.map.samurai.image, (self.map.samurai.rect.x - cam_x, self.map.samurai.rect.y - cam_y))
+        self.screen.blit(self.map.ghost.image, (self.map.ghost.rect.x - cam_x, self.map.ghost.rect.y - cam_y))
  
         # Affichage du joueur (toujours centré à l'écran)
         self.screen.blit(
@@ -517,11 +520,23 @@ class Game01:
                 monster.damage(self.map.player.power)
 
             # permet de passer en mini jeu lorsqu'on s'approche du boss / CHANGEMENT ON PASSE EN COMBAT
-            if not self.minigame_active and (abs(player.rect.centerx - self.map.boss.rect.centerx) < 50 and abs(player.rect.centery - self.map.boss.rect.centery) < 50):
-                self.state = 'combat'
-                self.combat = Combat(self.map.player, self.map.boss)
-                #self.state = 'minigame'
-                #self.minigame_active = True
+            if not self.minigame_active:
+
+                if (abs(player.rect.centerx - self.map.boss.rect.centerx) < 50 and abs(player.rect.centery - self.map.boss.rect.centery) < 50):
+                    self.state = 'combat'
+                    self.combat = Combat(self.map.player, self.map.boss)
+                    self.index = 0
+
+                if (abs(player.rect.centerx - self.map.samurai.rect.centerx) < 50 and abs(player.rect.centery - self.map.samurai.rect.centery) < 50):
+                    self.state = 'combat'
+                    self.combat = Combat(self.map.player, self.map.samurai)
+                    self.index = 1
+
+                if (abs(player.rect.centerx - self.map.ghost.rect.centerx) < 50 and abs(player.rect.centery - self.map.ghost.rect.centery) < 50):
+                    self.state = 'combat'
+                    self.combat = Combat(self.map.player, self.map.ghost)
+                    self.index = 3
+                
 
         # ── NPC (juste animé) ──────────────────────────────
         for npc in self.map.npc_grp:
@@ -529,6 +544,8 @@ class Game01:
         
         # ── Boss (juste animé) ──────────────────────────────
         self.map.update_dragon()
+        self.map.update_samurai()
+        self.map.update_ghost()
 
         player.just_attack = False
  
@@ -574,6 +591,8 @@ class Game01:
 
         # Affichage du boss
         self.screen.blit(self.map.boss.image, (self.map.boss.rect.x - cam_x, self.map.boss.rect.y - cam_y))
+        self.screen.blit(self.map.samurai.image, (self.map.samurai.rect.x - cam_x, self.map.samurai.rect.y - cam_y))
+        self.screen.blit(self.map.ghost.image, (self.map.ghost.rect.x - cam_x, self.map.ghost.rect.y - cam_y))
 
         self.screen.blit(self.map.walls, (-cam_x, -cam_y))
         

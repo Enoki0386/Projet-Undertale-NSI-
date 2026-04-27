@@ -77,19 +77,26 @@ animations = {
     'dragon_fight'   : load_animation_images('dragon_fighting', 16), # 16 frames
     'dragon_final'   : load_animation_images('dragon_final_state', 5), # 5 frames 
 
+    # --- Boss : samurai ---
+    'samurai_idle'  : load_animation_images('samourai_IDLE', 10),
+    'samurai_run'   : load_animation_images('samourai_RUN', 16),
+
+    # --- Boss : ghost ---
+    'ghost_idle'    : load_animation_images('ghost_idle', 13),
+
     # --- Npc : 1 ---
     'npc1_left'     : load_animation_images('npc1_left', 8),
-    'npc1_front'     : load_animation_images('npc1_front', 8),
+    'npc1_front'    : load_animation_images('npc1_front', 8),
     'npc1_back'     : load_animation_images('npc1_back', 8),
 
     # --- Npc : 2 ---
     'npc2_left'     : load_animation_images('npc2_left', 8),
-    'npc2_front'     : load_animation_images('npc2_front', 8),
+    'npc2_front'    : load_animation_images('npc2_front', 8),
     'npc2_back'     : load_animation_images('npc2_back', 8),
 
     # --- Npc : 3 ---
     'npc3_left'     : load_animation_images('npc3_left', 8),
-    'npc3_front'     : load_animation_images('npc3_front', 8),
+    'npc3_front'    : load_animation_images('npc3_front', 8),
     'npc3_back'     : load_animation_images('npc3_back', 8)
 }
 

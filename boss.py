@@ -26,3 +26,39 @@ class Boss(animation.AnimateSprite):
     def update_animation_boss(self):
         '''Méthode destinée à animer le dragon'''
         self.animate()
+
+
+class Samurai(animation.AnimateSprite):
+    '''Cette classe est en construction, elle devrait créer le boss du jeu. Cependant ici, elle sert uniquement à déclencher une
+    mécanique du jeu, qui est le mini-jeu. Ainsi il n'y a pas d'animations, de collisions encore.'''
+    def __init__(self, x, y):
+        '''Quelques caractéristiques de l'objet'''
+        super().__init__('samurai_idle')
+        w, h =  96, 96
+        self.rect = pygame.Rect(x, y, w, h)
+        self.rect.x = x 
+        self.rect.y = y
+        self.health = 1000
+        self.max_health = 1000
+    
+    def update_animation_samurai(self):
+        '''Méthode destinée à animer le dragon'''
+        self.animate()
+
+
+class Ghost(animation.AnimateSprite):
+    '''Cette classe est en construction, elle devrait créer le boss du jeu. Cependant ici, elle sert uniquement à déclencher une
+    mécanique du jeu, qui est le mini-jeu. Ainsi il n'y a pas d'animations, de collisions encore.'''
+    def __init__(self, x, y):
+        '''Quelques caractéristiques de l'objet'''
+        super().__init__('ghost_idle')
+        w, h = 153, 170
+        self.rect = pygame.Rect(x, y, w, h)
+        self.rect.x = x 
+        self.rect.y = y
+        self.health = 1000
+        self.max_health = 1000
+    
+    def update_animation_ghost(self):
+        '''Méthode destinée à animer le dragon'''
+        self.animate()
