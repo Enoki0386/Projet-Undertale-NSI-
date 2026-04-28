@@ -30,6 +30,12 @@ class Boss(animation.AnimateSprite):
 
     def damage(self, amount):
         self.health = max(0, self.health - amount)
+    
+    def main_health_bar(self, surface):
+        '''Affiche une grande barre de vie en bas à gauche de l'écran'''
+        pygame.draw.rect(surface, (200, 0, 0), (20, 60, self.max_health * 8, 40))
+        pygame.draw.rect(surface, (80, 210, 40), (20, 60, max(0, self.health) * 8, 40))
+        pygame.draw.rect(surface, (255, 255, 255), (20, 60, self.max_health * 8, 40), 1)
 
 
 class Samurai(animation.AnimateSprite):
@@ -53,6 +59,12 @@ class Samurai(animation.AnimateSprite):
     def damage(self, amount):
         self.health = max(0, self.health - amount)
 
+    def main_health_bar(self, surface):
+        '''Affiche une grande barre de vie en bas à gauche de l'écran'''
+        pygame.draw.rect(surface, (200, 0, 0), (20, 60, self.max_health * 8, 40))
+        pygame.draw.rect(surface, (80, 210, 40), (20, 60, max(0, self.health) * 8, 40))
+        pygame.draw.rect(surface, (255, 255, 255), (20, 60, self.max_health * 8, 40), 1)
+
 
 class Ghost(animation.AnimateSprite):
     '''Cette classe est en construction, elle devrait créer le boss du jeu. Cependant ici, elle sert uniquement à déclencher une
@@ -74,3 +86,9 @@ class Ghost(animation.AnimateSprite):
     
     def damage(self, amount):
         self.health = max(0, self.health - amount)
+
+    def main_health_bar(self, surface):
+        '''Affiche une grande barre de vie en bas à gauche de l'écran'''
+        pygame.draw.rect(surface, (200, 0, 0), (20, 60, self.max_health * 8, 40))
+        pygame.draw.rect(surface, (80, 210, 40), (20, 60, max(0, self.health) * 8, 40))
+        pygame.draw.rect(surface, (255, 255, 255), (20, 60, self.max_health * 8, 40), 1)

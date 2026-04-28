@@ -6,10 +6,10 @@ class Combat:
         self.enemy = enemy
         self.turn = 'player_turn' # système tour par tour
         self.finished = False
-        self.result = None # win ou non
+        self.result = None 
 
         # actions disponibles
-        self.actions = ['Attaquer', 'Défendre', 'Fuir', 'Objet']
+        self.actions = ['Attaquer', 'Défendre', 'Fuir']
         self.selected_action = 0 # index de l'action dans la liste
 
 
@@ -36,15 +36,13 @@ class Combat:
 
         if self.actions[self.selected_action] == 'Attaquer':
             self.turn = 'minigame'  # déclenche le mini-jeu barre
+            self.result = 'combat'
     
         elif self.actions[self.selected_action] == 'Défendre':
             self.player.protection += 5  # boost temporaire
             self.turn = 'enemy_turn'
+            self.result = 'combat'
         
         elif self.actions[self.selected_action] == 'Fuir':
             self.finished = True
-            self.result = 'flee'
-        
-        elif self.actions[self.selected_action] == 'Objet':
-            pass  # à faire plus tard
-    
+            self.result = 'fuite'

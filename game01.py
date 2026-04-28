@@ -25,6 +25,7 @@ class Game01:
         self.current_npc        = None
 
         self.combat             = None # système de combat off (s'active dans le run)
+        self.in_combat_before   = False # permet de ne pas relancer le combat
 
         pygame.display.set_caption('Undertale')
         self.screen     = pygame.display.set_mode((self.width, self.height))
@@ -171,10 +172,19 @@ class Game01:
         self.map.minigame.update_projectile()
     
 
+    def reset_minigame(self):
+        self.map.minigame.projectiles.empty()
+
+
     def launch_minigame2(self, screen):
         self.map.minigame.draw_minigame_2(screen)
         self.map.minigame.update_minigame_2()
     
+
+    def reset_minigame2(self):
+        self.map.minigame.grille.clear()
+        self.map.minigame.grille = self.map.minigame.grille_minigame2()
+        
 
     def launch_minigame_player(self, screen):
         self.map.minigame.player_turn_minigame(screen)
@@ -186,6 +196,10 @@ class Game01:
         self.map.minigame.draw_minigame_4(screen)
         self.map.minigame.update_minigame_4()
         self.map.minigame.get_pos_cursor()
+    
+
+    def reset_minigame4(self):
+        self.map.minigame.projectiles.empty()
 
     
     # ------------------------------------------------------------------ 
@@ -318,6 +332,7 @@ class Game01:
 
 
                     elif self.state == 'combat':
+
                         if event.key == pygame.K_RIGHT:
                             self.combat.selected_action = (self.combat.selected_action + 1) % len(self.combat.actions)
                         elif event.key == pygame.K_LEFT:
@@ -325,10 +340,10 @@ class Game01:
                         elif event.key == pygame.K_SPACE:
                             self.combat.confirm_action()
                             
-                            if self.combat.result == 'flee':
-                                self.state = 'exploration'
-                            else:
+                            if self.combat.result == 'combat':
                                 self.state = 'minigame'
+                            else:
+                                self.state = 'exploration'
               
 
                 elif event.type == pygame.KEYUP:                # si la touche n'est pas appuyée
@@ -509,20 +524,23 @@ class Game01:
             # permet de passer en mini jeu lorsqu'on s'approche du boss / CHANGEMENT ON PASSE EN COMBAT
             if not self.minigame_active:
 
-                if (abs(player.rect.centerx - self.map.boss.rect.centerx) < 50 and abs(player.rect.centery - self.map.boss.rect.centery) < 50):
+                if (abs(player.rect.centerx - self.map.boss.rect.centerx) < 50 and abs(player.rect.centery - self.map.boss.rect.centery) < 50) and not self.in_combat_before:
                     self.state = 'combat'
                     self.combat = Combat(self.map.player, self.map.boss)
                     self.index = 0
+                    self.in_combat_before = True
 
-                if (abs(player.rect.centerx - self.map.samurai.rect.centerx) < 50 and abs(player.rect.centery - self.map.samurai.rect.centery) < 50):
+                if (abs(player.rect.centerx - self.map.samurai.rect.centerx) < 50 and abs(player.rect.centery - self.map.samurai.rect.centery) < 50) and not self.in_combat_before:
                     self.state = 'combat'
                     self.combat = Combat(self.map.player, self.map.samurai)
                     self.index = 1
+                    self.in_combat_before = True
 
-                if (abs(player.rect.centerx - self.map.ghost.rect.centerx) < 50 and abs(player.rect.centery - self.map.ghost.rect.centery) < 50):
+                if (abs(player.rect.centerx - self.map.ghost.rect.centerx) < 50 and abs(player.rect.centery - self.map.ghost.rect.centery) < 50) and not self.in_combat_before:
                     self.state = 'combat'
                     self.combat = Combat(self.map.player, self.map.ghost)
-                    self.index = 3
+                    self.index = 2
+                    self.in_combat_before = True
                 
 
         # ── NPC (juste animé) ──────────────────────────────
@@ -545,6 +563,7 @@ class Game01:
         """Délègue l'affichage et la logique au mini-jeu, gère les contrôles."""
 
         minigame_chosed = self.list_minigame[index]
+        self.combat.enemy.main_health_bar(self.screen)
 
         if self.combat.turn == 'enemy_turn':
             
@@ -556,12 +575,29 @@ class Game01:
 
                 elif self.map.player.pressed.get(pygame.K_RIGHT):
                     self.map.minigame.move_right()
+
+                if self.map.minigame.finished:
+                    self.map.minigame.finished = False
+                    self.reset_minigame()
+                    self.combat.turn = 'minigame'
+
             
             elif minigame_chosed == '2':
                 self.launch_minigame2(self.screen)
+
+                if self.map.minigame.finished:
+                    self.map.minigame.finished = False
+                    self.reset_minigame2()
+                    self.combat.turn = 'minigame'
             
+
             elif minigame_chosed == '4':
                 self.launch_minigame_4(self.screen)
+
+                if self.map.minigame.finished:
+                    self.map.minigame.finished = False
+                    self.reset_minigame4()
+                    self.combat.turn = 'minigame'
         
 
         elif self.combat.turn == 'minigame':  
@@ -571,8 +607,9 @@ class Game01:
                 if self.map.minigame.COLOR == (0, 128, 0): # win
                     self.combat.enemy.damage(self.map.player.power)
 
-                self.combat.turn = 'enemy_turn'
                 self.map.minigame.finished = False
+                self.combat.turn = 'enemy_turn'
+                self.map.minigame.COLOR = (0, 0, 0)
                 self.map.minigame.POS_X = self.map.minigame.x
                 
 

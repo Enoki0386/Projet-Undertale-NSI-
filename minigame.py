@@ -265,7 +265,6 @@ class Minigame(pygame.sprite.Sprite):
         
         elif self.j == line and self.i == col:
             self.finished = True
-            print('win')
 
                 
     def place_cursor_and_win_case(self):
