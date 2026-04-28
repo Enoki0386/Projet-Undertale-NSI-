@@ -84,6 +84,7 @@ class Minigame(pygame.sprite.Sprite):
         
         # gestion de l'état du mini jeu 
         self.finished = False
+        self.win = None
 
         # grille du mini jeu 2
         self.grille = self.grille_minigame2()
@@ -262,9 +263,12 @@ class Minigame(pygame.sprite.Sprite):
         
         if self.grille[line][col] == 1:
             self.finished = True
+            self.win = False
         
         elif self.j == line and self.i == col:
             self.finished = True
+            self.win = True
+
 
                 
     def place_cursor_and_win_case(self):

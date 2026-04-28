@@ -586,6 +586,9 @@ class Game01:
                 self.launch_minigame2(self.screen)
 
                 if self.map.minigame.finished:
+                    if not self.map.minigame.win:
+                        self.combat.player.damage(self.combat.enemy.attack)
+                        
                     self.map.minigame.finished = False
                     self.reset_minigame2()
                     self.combat.turn = 'minigame'
