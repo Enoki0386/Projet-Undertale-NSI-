@@ -2,6 +2,7 @@ import pygame
 pygame.init()
 from maps import Map
 from combat_system import Combat
+from tutoriel import Tutoriel
 # ------------------------------------------------------------------ 
 #  Init + touches de deplacements                                          
 # ------------------------------------------------------------------ 
@@ -17,7 +18,7 @@ class Game01:
         self.width      = 1080
         self.height     = 720
 
-        self.state              = 'exploration'
+        self.state              = 'tutoriel'
         self.minigame_active    = False
         self.list_minigame      = ['1', '2', '4'] # le mini jeu 3 est celui du joueur, son système d'attaque (pas la car je separe les mini jeux des boss la)
         self.index              = None # l'index qui permet de choisir le mini jeu
@@ -30,6 +31,7 @@ class Game01:
         pygame.display.set_caption('Undertale')
         self.screen     = pygame.display.set_mode((self.width, self.height))
         self.map        = Map()
+        self.tutoriel   = Tutoriel('tutoriel')
 
         self.init_inventory()
         self.give_start_item('start_sword')
@@ -232,6 +234,34 @@ class Game01:
         # je crée les boites de dialogues
         self.current_npc.draw_dialogue(self.screen, self.width, self.height)
 
+
+    def update_tutoriel(self, cam_x, cam_y):
+
+        # j'affiche l'arrière plan mais gelé
+        player = self.map.player
+ 
+        # Affichage des couches de la carte
+        self.screen.blit(self.map.background, (-cam_x, -cam_y))
+        self.screen.blit(self.map.path,       (-cam_x, -cam_y))
+
+        # Affichage des npcs
+        for npc in self.map.npc_grp:
+            self.screen.blit(npc.image, (npc.rect.x - cam_x, npc.rect.y - cam_y))
+        
+        # Affichage du joueur (toujours centré à l'écran)
+        self.screen.blit(
+            player.image,
+            (self.width  // 2 - player.image.get_width()  // 2,
+             self.height // 2 - player.image.get_height() // 2)
+        )
+ 
+        # Texture des murs (par-dessus pour masquer les entités derrière)
+        self.screen.blit(self.map.walls, (-cam_x, -cam_y))
+
+        # j'update le tut
+        self.tutoriel.update()
+        self.tutoriel.draw_dialogue(self.screen, self.width, self.height)
+
     # ------------------------------------------------------------------ 
     #  Main boucle                                                       
     # ------------------------------------------------------------------ 
@@ -346,7 +376,16 @@ class Game01:
                                 self.state = 'minigame'
                             else:
                                 self.state = 'exploration'
-              
+                    
+
+                    elif self.state == 'tutoriel':
+                        
+                        if event.key == pygame.K_SPACE:
+                            self.tutoriel.next_dialogue()
+                            
+                            if self.tutoriel.finished:
+                                self.state = 'exploration'
+                
 
                 elif event.type == pygame.KEYUP:                # si la touche n'est pas appuyée
                     self.map.player.pressed[event.key] = False  # elle est assignée à False
@@ -390,6 +429,9 @@ class Game01:
             elif self.state == 'combat':
                 self.update_combat(cam_x, cam_y)
             
+            elif self.state == 'tutoriel':
+                self.update_tutoriel(cam_x, cam_y)
+                
  
             pygame.display.flip()
             clock.tick(60) # nbr de frames par sec

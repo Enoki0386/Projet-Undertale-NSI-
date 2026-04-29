@@ -1,2 +1,5 @@
-Bonjour, bienvenue dans les souterrins. Ici nous sommes dans un temple
-assez sinitre.
+Bonjour, bienvenue dans les souterrins. 
+Ici nous sommes dans un temple assez sinitre.
+Ce monde est corrompu par des entites.
+Elles sont au nombre de TROIS.
+Je compte sur vous pour vous en charger.

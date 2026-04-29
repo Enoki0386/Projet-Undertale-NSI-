@@ -14,7 +14,10 @@ class NPC(animation.AnimateSprite): # 'animation.AnimateSprite' est sensé être
 
         # couleur des dialogues
         self.WHITE = (255, 255, 255) # -> texte
-        self.BROWN = (210, 105, 30) # -> fond
+        self.BLACK = (0, 0, 0) # -> fond
+
+        # police
+        self.font = pygame.font.Font('assets/PixelOperator8-Bold.ttf', 24)
 
         # dialogue + fonctionnement
         self.dialogues = self.load_dialogue(filename)
@@ -47,16 +50,15 @@ class NPC(animation.AnimateSprite): # 'animation.AnimateSprite' est sensé être
         box_w = screen_width - 100
         box_h = 120
 
-        pygame.draw.rect(screen, self.BROWN, (box_x, box_y, box_w, box_h), border_radius=10)
+        pygame.draw.rect(screen, self.BLACK, (box_x, box_y, box_w, box_h), border_radius=10)
         pygame.draw.rect(screen, self.WHITE, (box_x, box_y, box_w, box_h), 2, border_radius=10)
 
         # texte
         if self.dialogue_index < len(self.dialogues):
-            font = pygame.font.Font(None, 36)
             text = self.dialogues[self.dialogue_index].strip()  # .strip() enlève le \n
-            text_surface = font.render(text, True, self.WHITE)
+            text_surface = self.font.render(text, True, self.WHITE)
             screen.blit(text_surface, (box_x + 20, box_y + 40))
-    
+
     def update_animation_npc(self):
         '''Méthode visant à animer le npc'''
         pass

@@ -1,0 +1,14 @@
+Salutations
+Vous etes dans un temple,
+il y a encore deux autres endroits non loin.
+Attention aux ennemis, surtout aux trois boss.
+Parler aux npc peux vous aider.
+Avant de vous laisser, voici quelques indications : 
+Z : avancer
+Q : gauche
+D : droite
+S : reculer
+E : ouvrir l inventaire
+F : interragir
+Maj : s'accroupir
+

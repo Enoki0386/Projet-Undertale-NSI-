@@ -1,2 +1,3 @@
-Bonjour, voyageur. Vous êtes enfin sorti du temple.
+Bonjour, voyageur !
+Vous êtes enfin sorti du temple.
 L'air frais est si bon ici.
