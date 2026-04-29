@@ -399,8 +399,7 @@ class Game01:
     # ------------------------------------------------------------------ 
     def update_exploration(self, cam_x, cam_y):
         player = self.map.player
-        print(self.map.player.rect.x)
-        print(self.map.player.rect.y)
+        
         # Affichage des couches de la carte
         self.screen.blit(self.map.background, (-cam_x, -cam_y))
         self.screen.blit(self.map.path,       (-cam_x, -cam_y))
