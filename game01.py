@@ -415,10 +415,9 @@ class Game01:
         for npc in self.map.npc_grp:
             self.screen.blit(npc.image, (npc.rect.x - cam_x, npc.rect.y - cam_y))
  
-        # Affichage des boss
+        # Affichage du boss
         self.screen.blit(self.map.boss.image, (self.map.boss.rect.x - cam_x, self.map.boss.rect.y - cam_y))
-        self.screen.blit(self.map.samurai.image, (self.map.samurai.rect.x - cam_x, self.map.samurai.rect.y - cam_y))
-        self.screen.blit(self.map.ghost.image, (self.map.ghost.rect.x - cam_x, self.map.ghost.rect.y - cam_y))
+
  
         # Affichage du joueur (toujours centré à l'écran)
         self.screen.blit(
@@ -527,19 +526,7 @@ class Game01:
                 if (abs(player.rect.centerx - self.map.boss.rect.centerx) < 50 and abs(player.rect.centery - self.map.boss.rect.centery) < 50) and not self.in_combat_before:
                     self.state = 'combat'
                     self.combat = Combat(self.map.player, self.map.boss)
-                    self.index = 0
-                    self.in_combat_before = True
-
-                if (abs(player.rect.centerx - self.map.samurai.rect.centerx) < 50 and abs(player.rect.centery - self.map.samurai.rect.centery) < 50) and not self.in_combat_before:
-                    self.state = 'combat'
-                    self.combat = Combat(self.map.player, self.map.samurai)
-                    self.index = 1
-                    self.in_combat_before = True
-
-                if (abs(player.rect.centerx - self.map.ghost.rect.centerx) < 50 and abs(player.rect.centery - self.map.ghost.rect.centery) < 50) and not self.in_combat_before:
-                    self.state = 'combat'
-                    self.combat = Combat(self.map.player, self.map.ghost)
-                    self.index = 2
+                    self.index = self.map.boss_index
                     self.in_combat_before = True
                 
 
@@ -548,9 +535,7 @@ class Game01:
             npc.animate()
         
         # ── Boss (juste animé) ──────────────────────────────
-        self.map.update_dragon()
-        self.map.update_samurai()
-        self.map.update_ghost()
+        self.map.update_boss()
 
         player.just_attack = False
  
@@ -628,8 +613,6 @@ class Game01:
 
         # Affichage du boss
         self.screen.blit(self.map.boss.image, (self.map.boss.rect.x - cam_x, self.map.boss.rect.y - cam_y))
-        self.screen.blit(self.map.samurai.image, (self.map.samurai.rect.x - cam_x, self.map.samurai.rect.y - cam_y))
-        self.screen.blit(self.map.ghost.image, (self.map.ghost.rect.x - cam_x, self.map.ghost.rect.y - cam_y))
 
         self.screen.blit(self.map.walls, (-cam_x, -cam_y))
         

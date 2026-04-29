@@ -32,12 +32,15 @@ Map_settings = {
 }
  
 Items_choice     = ['shield', 'heart', 'knife']
-Dialogues_choice = ['npc_1', 'npc_2', 'npc_3']
+Dialogues_choice = ['npc_1', 'npc_2', 'npc_3', 'npc_4', 'npc_5', 'npc_6']
 Sprites_choice   = ['npc1_front', 'npc2_front', 'npc3_front']
-Monstre_nbr    = 5
-Items_nbr      = len(Items_choice)
-Npcs_nbr       = len(Dialogues_choice)
-WALL_Y_OFFSET = 8
+Npcs_pos         = [(350, 640), (230, 1410), (1353, 1136), (258, 653), (1396, 303), (853, 1171)] # trois premiers tuple = map 1, trois derniers tuple = map 2
+Boss_pos         = [(1060, 1410), (607, 873)] # tuple 1 = map 1, tuple 2 = map 2, tuple 3 = map 3
+Monstre_nbr      = 5
+Items_nbr        = len(Items_choice)
+Npcs_nbr         = 3
+Boss_nbr         = 1
+WALL_Y_OFFSET    = 8
 # ------------------------------------------------------------------
 # Création des murs
 # ------------------------------------------------------------------
@@ -58,10 +61,8 @@ class Map:
         self.tile_size      = 16
 
         self.player         = Player01()
-        self.boss           = Boss(800, 892)
-        self.samurai        = Samurai(200, 892)
-        self.ghost          = Ghost(500, 892)
         self.minigame       = Minigame()
+        self.boss = None
         self.all_monsters   = pygame.sprite.Group()
         self.wall_group     = pygame.sprite.Group()
         self.items_group    = pygame.sprite.Group()
@@ -72,8 +73,7 @@ class Map:
         self.path:       pygame.Surface | None = None
         self.walls:      pygame.Surface | None = None
 
-        self.boss.map_width  = self.width
-        self.boss.map_height = self.height
+
     # ------------------------------------------------------------------
     # Chargement map et murs
     # ------------------------------------------------------------------
@@ -81,6 +81,10 @@ class Map:
         '''Charge une carte : images, CSV des murs, monstres et objets.'''
         self.all_monsters.empty()
         self.items_group.empty()
+        self.npc_grp.empty()
+
+        if self.boss is not None:
+            self.boss.kill()
         
         Map_set = Map_settings[map]
         self.background = pygame.image.load(Map_set['background'])
@@ -89,8 +93,9 @@ class Map:
  
         self.load_wall_group(Map_set['walls_csv'])
         self.spawn_monsters(Map_set['spawn_zone'])
-        self.spawn_npcs(Map_set['spawn_zone'])
+        self.spawn_npcs(map)
         self.spawn_items(Map_set['spawn_zone'])
+        self.spawn_boss(map)
  
         self.player.rect.x = x
         self.player.rect.y = y
@@ -139,15 +144,20 @@ class Map:
             res += 1
     
 
-    def spawn_npcs(self, zone):
+    def spawn_npcs(self, map):
         '''Fait apparître des personnages non jouable dans la zone entrée'''
         # c'est ici où j'attribue les différents dialogues des npcs, j'en donne des différents mais la gestion peut être améliorée
-        x_min, x_max, y_min, y_max = zone
         res = 0
         while res < Npcs_nbr:
-            x   = randint(x_min, x_max)
-            y   = randint(y_min, y_max)
-            filename = Dialogues_choice[res]
+            if map == 1:
+                x = Npcs_pos[res][0]
+                y = Npcs_pos[res][1]
+                filename = Dialogues_choice[res]
+            else:
+                x = Npcs_pos[res + 3][0]
+                y = Npcs_pos[res + 3][0]
+                filename = Dialogues_choice[res + 3]
+                
             sprite = Sprites_choice[res]
             n = NPC(x, y, filename, sprite)
             # Transmet les limites de la map au npc pour le clamping
@@ -155,6 +165,28 @@ class Map:
             n.map_height = self.height
             self.npc_grp.add(n)
             res += 1
+
+
+    def spawn_boss(self, map):
+        
+        res = 0
+        while res < Boss_nbr:
+            if map == 1:
+                x = Boss_pos[res][0]
+                y = Boss_pos[res][1]
+                self.boss = Boss(x, y)
+                self.boss_index = 0
+
+            elif map == 2:
+                x = Boss_pos[res + 1][0]
+                y = Boss_pos[res + 1][1]
+                self.boss = Samurai(x, y)
+                self.boss_index = 1
+
+            self.boss.map_width  = self.width
+            self.boss.map_height = self.height
+            res += 1
+
 
     # ------------------------------------------------------------------
     # Update des joueurs + monstres 
@@ -170,11 +202,12 @@ class Map:
         for npc in self.npc_grp:
             npc.update_animation_npc()
     
-    def update_dragon(self):
+    def update_boss(self):
         self.boss.update_animation_boss()
-    
+    '''
     def update_samurai(self):
         self.samurai.update_animation_samurai()
     
     def update_ghost(self):
         self.ghost.update_animation_ghost()
+    '''

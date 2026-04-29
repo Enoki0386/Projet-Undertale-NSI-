@@ -46,3 +46,25 @@ class Combat:
         elif self.actions[self.selected_action] == 'Fuir':
             self.finished = True
             self.result = 'fuite'
+    
+
+    def next_turn_enemy(self, screen):
+
+        pygame.draw.rect(screen, (0, 0, 0), (self.x, self.y, self.width, self.height), border_radius=10)
+        pygame.draw.rect(screen, (255, 255, 255), (self.x, self.y, self.width, self.height), 2, border_radius=10)
+
+        font = pygame.font.Font(None, 36)
+        text = 'Enemy turn !'
+        text_surface = font.render(text, True, (255, 255, 255))
+        screen.blit(text_surface, 500, 300)
+
+
+    def next_turn_player(self, screen):
+
+        pygame.draw.rect(screen, (0, 0, 0), (self.x, self.y, self.width, self.height), border_radius=10)
+        pygame.draw.rect(screen, (255, 255, 255), (self.x, self.y, self.width, self.height), 2, border_radius=10)
+
+        font = pygame.font.Font(None, 36)
+        text = 'Player turn !'
+        text_surface = font.render(text, True, (255, 255, 255))
+        screen.blit(text_surface, 500, 300)
