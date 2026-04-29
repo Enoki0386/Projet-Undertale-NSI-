@@ -266,6 +266,8 @@ class Game01:
                                 self.map.load_maps(2, 28, 653)
                             elif 25 < px < 66 and 640 < py < 700:
                                 self.map.load_maps(1, 600, 630)
+                            elif 1300 < px < 1450 and 1000 < py < 1150:
+                                self.map.load_maps(3, 200, 100)
                     
                         # Ramassage d'item
                         if event.key == pygame.K_f:
@@ -397,7 +399,8 @@ class Game01:
     # ------------------------------------------------------------------ 
     def update_exploration(self, cam_x, cam_y):
         player = self.map.player
- 
+        print(self.map.player.rect.x)
+        print(self.map.player.rect.y)
         # Affichage des couches de la carte
         self.screen.blit(self.map.background, (-cam_x, -cam_y))
         self.screen.blit(self.map.path,       (-cam_x, -cam_y))

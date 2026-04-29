@@ -29,13 +29,20 @@ Map_settings = {
         'walls_csv'  : 'carte2/carte_undertale_2_walls.csv',
         'spawn_zone' : (600, 1500, 200, 1400),
     },
+    3: {
+        'background' : 'carte3/carte_undertale_3_background.png',
+        'path'       : 'carte3/carte_undertale_3_path.png',
+        'walls_img'  : 'carte3/carte_undertale_3_walls.png',      # image vide (on est dehors)
+        'walls_csv'  : 'carte3/carte_undertale_3_walls.csv',
+        'spawn_zone' : (0, 1600, 0, 1600)
+    }
 }
  
 Items_choice     = ['shield', 'heart', 'knife']
-Dialogues_choice = ['npc_1', 'npc_2', 'npc_3', 'npc_4', 'npc_5', 'npc_6']
+Dialogues_choice = ['npc_1', 'npc_2', 'npc_3', 'npc_4', 'npc_5', 'npc_6', 'npc_7', 'npc_8', 'npc_9']
 Sprites_choice   = ['npc1_front', 'npc2_front', 'npc3_front']
-Npcs_pos         = [(350, 640), (230, 1410), (1353, 1136), (258, 653), (1396, 303), (853, 1171)] # trois premiers tuple = map 1, trois derniers tuple = map 2
-Boss_pos         = [(1060, 1410), (607, 873)] # tuple 1 = map 1, tuple 2 = map 2, tuple 3 = map 3
+Npcs_pos         = [(350, 640), (230, 1410), (1353, 1136), (258, 653), (1396, 303), (853, 1171), (1200, 300), (300, 800), (1000, 1000)] # trois premiers tuple = map 1, trois milieu tuple = map 2, trois dernier tuple = map 3
+Boss_pos         = [(1060, 1410), (607, 873), (900, 1200)] # tuple 1 = map 1, tuple 2 = map 2, tuple 3 = map 3
 Monstre_nbr      = 5
 Items_nbr        = len(Items_choice)
 Npcs_nbr         = 3
@@ -153,10 +160,14 @@ class Map:
                 x = Npcs_pos[res][0]
                 y = Npcs_pos[res][1]
                 filename = Dialogues_choice[res]
-            else:
+            elif map == 2:
                 x = Npcs_pos[res + 3][0]
                 y = Npcs_pos[res + 3][0]
                 filename = Dialogues_choice[res + 3]
+            elif map == 3:
+                x = Npcs_pos[res + 6][0]
+                y = Npcs_pos[res + 6][0]
+                filename = Dialogues_choice[res + 6]
                 
             sprite = Sprites_choice[res]
             n = NPC(x, y, filename, sprite)
@@ -182,6 +193,12 @@ class Map:
                 y = Boss_pos[res + 1][1]
                 self.boss = Samurai(x, y)
                 self.boss_index = 1
+            
+            elif map == 3:
+                x = Boss_pos[res + 2][0]
+                y = Boss_pos[res + 2][1]
+                self.boss = Ghost(x, y)
+                self.boss_index = 2
 
             self.boss.map_width  = self.width
             self.boss.map_height = self.height
@@ -204,10 +221,3 @@ class Map:
     
     def update_boss(self):
         self.boss.update_animation_boss()
-    '''
-    def update_samurai(self):
-        self.samurai.update_animation_samurai()
-    
-    def update_ghost(self):
-        self.ghost.update_animation_ghost()
-    '''
