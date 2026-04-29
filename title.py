@@ -124,7 +124,7 @@ class TitleScreen:
 
     def draw_title(self):
         pulse = math.sin(self.tick * 1.8) * 3 #permets de le faire bouger (trigo sinus et tout)
-        text   = 'Le nom du jeu MDR'
+        text   = 'Depthstale'
         surf   = self.font_title.render(text, True, C_TEXT)
         tx     = self.w // 2 - surf.get_width() // 2
         ty     = int(self.h * 0.22 + pulse)
