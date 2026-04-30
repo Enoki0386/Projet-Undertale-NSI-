@@ -180,6 +180,7 @@ class Game01:
 
     def reset_minigame(self):
         self.map.minigame.projectiles.empty()
+        self.map.minigame.survival_timer = 0
 
 
     def launch_minigame2(self, screen):
@@ -190,6 +191,7 @@ class Game01:
     def reset_minigame2(self):
         self.map.minigame.grille.clear()
         self.map.minigame.grille = self.map.minigame.grille_minigame2()
+        self.map.minigame.place_cursor_and_win_case()
         
 
     def launch_minigame_player(self, screen):
@@ -205,6 +207,7 @@ class Game01:
 
     def reset_minigame4(self):
         self.map.minigame.projectiles.empty()
+        self.map.minigame.survival_timer = 0
 
     
     # ------------------------------------------------------------------ 

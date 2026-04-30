@@ -66,8 +66,11 @@ class Minigame(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (20, 20))
         self.rect = self.image.get_rect()
         self.rect.x = (self.width // 2) - (self.rect.width // 2)
-        self.rect.y = self.height + (100 - self.rect.height) - 10
+        self.rect.y = self.y + self.height - self.rect.height - 5
         self.velocity = 5
+
+        # pour le mini jeu 2 j'ai choisi d'ajouter un 2e rect
+        self.rect2 = self.image.get_rect()
 
         # caractéristiques du rectangle jouable par le joueur
         self.movement = 5
@@ -81,6 +84,10 @@ class Minigame(pygame.sprite.Sprite):
         # gestion des projectiles
         self.projectiles = pygame.sprite.Group()
         self.spawn_time = 0
+
+        # gestion de la victoire pour mini 1 et 4 (10 secondes de survie)
+        self.survival_timer = 0
+        self.survival_duration = 600 # 10 s à 60 fps    
         
         # gestion de l'état du mini jeu 
         self.finished = False
@@ -89,15 +96,15 @@ class Minigame(pygame.sprite.Sprite):
         # grille du mini jeu 2
         self.grille = self.grille_minigame2()
 
+        # position du rect 2
+        self.place_cursor_and_win_case()
+
         # gestion de la grille du mini jeu 2 (au bout de 10s la grille se redessine)
         self.compteur = 0
 
         # coordonnées de la case gagnante (mini jeu 2)
         self.i = 0
         self.j = 0
-
-        # mise à jour de la position du curseur pour le mini jeu 2 (solution temporaire) et de la case gagnante
-        self.place_cursor_and_win_case()
         
     
     def move_right(self):
@@ -112,26 +119,26 @@ class Minigame(pygame.sprite.Sprite):
 
     def move_case_right(self):
 
-        if self.rect.x + 60 <= self.width + self.x:
-            self.rect.x += 60
+        if self.rect2.x + 60 <= self.width + self.x:
+            self.rect2.x += 60
 
     
     def move_case_left(self):
 
-        if self.rect.x - 60 >= self.x:
-            self.rect.x -= 60
+        if self.rect2.x - 60 >= self.x:
+            self.rect2.x -= 60
     
 
     def move_case_up(self):
 
-        if self.rect.y - 60 >= self.y:
-            self.rect.y -= 60
+        if self.rect2.y - 60 >= self.y:
+            self.rect2.y -= 60
     
 
     def move_case_down(self):
 
-        if self.rect.y + 60 <= self.y + self.height:
-            self.rect.y += 60
+        if self.rect2.y + 60 <= self.y + self.height:
+            self.rect2.y += 60
     
 
     def player_turn_minigame(self, screen):
@@ -187,9 +194,16 @@ class Minigame(pygame.sprite.Sprite):
 
         hits = pygame.sprite.spritecollide(self, self.projectiles, False)
         self.spawn_time += 1
+        self.survival_timer += 1
+
+        if self.survival_timer >= self.survival_duration:
+            self.finished = True
+            self.win = True
+            return 
 
         if hits:
             self.finished = True
+            self.win = False
             return 
 
         if self.spawn_time >= 60: 
@@ -246,14 +260,20 @@ class Minigame(pygame.sprite.Sprite):
         
         pygame.draw.rect(screen, (0, 128, 0), pygame.Rect(self.j, self.i, case, case))
         
-        screen.blit(self.image, (self.rect.x, self.rect.y))
+        screen.blit(self.image, (self.rect2.x, self.rect2.y))
     
 
     def update_minigame_2(self):
         
         case = 60
-        col = (self.rect.x - 400) // case
-        line = (self.rect.y - 200) // case
+        col = (self.rect2.centerx - 400) // case
+        line = (self.rect2.centery - 200) // case
+
+        cols = 400 // case
+        lines = 300 // case
+
+        if not (0 <= col < cols and 0 <= line < lines):
+            return
 
         self.compteur += 1
 
@@ -269,7 +289,6 @@ class Minigame(pygame.sprite.Sprite):
             self.finished = True
             self.win = True
 
-
                 
     def place_cursor_and_win_case(self):
 
@@ -278,17 +297,17 @@ class Minigame(pygame.sprite.Sprite):
         lines = 300 // case
 
         # case gagnante
-        line = randint(0, lines)
-        col = randint(0, cols)
+        line = randint(0, lines - 1)
+        col = randint(0, cols - 1)
         self.i = 200 + (case * line)
         self.j = 400 + (case * col)
         
         # curseur
         for i in range(lines):
             for j in range(cols):
-                if self.grille[i][j] == 0:
-                    self.rect.y = 200 + (case * i) + (case // 2) - (self.rect.height // 2)
-                    self.rect.x = 400 + (case * j) + (case // 2) - (self.rect.width // 2)
+                if self.grille[i][j] == 0 and not (i == line and j == col):
+                    self.rect2.y = 200 + (case * i) + (case // 2) - (self.rect.height // 2)
+                    self.rect2.x = 400 + (case * j) + (case // 2) - (self.rect.width // 2)
                     return
     
 
@@ -298,6 +317,10 @@ class Minigame(pygame.sprite.Sprite):
             mx, my = pygame.mouse.get_pos()
             self.rect.x = mx
             self.rect.y = my
+        
+        else:
+            self.rect.x = self.x + (self.width / 2)
+            self.rect.y = self.y + (self.height / 2)
 
     
     def draw_minigame_4(self, screen):
@@ -318,9 +341,16 @@ class Minigame(pygame.sprite.Sprite):
 
         hits = pygame.sprite.spritecollide(self, self.projectiles, False)
         self.spawn_time += 1
+        self.survival_timer += 1
 
+        if self.survival_timer > self.survival_duration:
+            self.finished = True
+            self.win = True
+            return
+        
         if hits:
             self.finished = True
+            self.win = False
             return 
 
         if self.spawn_time >= 60: 
