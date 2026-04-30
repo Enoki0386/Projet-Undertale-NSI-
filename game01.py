@@ -28,6 +28,10 @@ class Game01:
         self.combat             = None # système de combat off (s'active dans le run)
         self.in_combat_before   = False # permet de ne pas relancer le combat
 
+        # permet d'indiquer le tour suivant en combat selon le temps voulu
+        self.turn_display_timer    = 0
+        self.turn_display_duration = 120
+
         pygame.display.set_caption('Undertale')
         self.screen     = pygame.display.set_mode((self.width, self.height))
         self.map        = Map()
@@ -194,7 +198,6 @@ class Game01:
     
 
     def launch_minigame_4(self, screen):
-        pygame.mouse.set_visible(False)
         self.map.minigame.draw_minigame_4(screen)
         self.map.minigame.update_minigame_4()
         self.map.minigame.get_pos_cursor()
@@ -216,6 +219,10 @@ class Game01:
         # Affichage des couches de la carte
         self.screen.blit(self.map.background, (-cam_x, -cam_y))
         self.screen.blit(self.map.path,       (-cam_x, -cam_y))
+
+        # Affichage des monstres
+        for monster in self.map.all_monsters:
+            self.screen.blit(monster.image, (monster.rect.x - cam_x, monster.rect.y - cam_y))
 
         # Affichage des npcs
         for npc in self.map.npc_grp:
@@ -271,6 +278,7 @@ class Game01:
         running = True
 
         while running:
+            pygame.mouse.set_visible(False)
             self.screen.fill((0, 0, 0))
             # Camera centré sur le joueur 
             cam_x = self.map.player.rect.centerx - self.width    // 2
@@ -608,7 +616,14 @@ class Game01:
                 if self.map.minigame.finished:
                     self.map.minigame.finished = False
                     self.reset_minigame()
-                    self.combat.turn = 'minigame'
+                    self.turn_display_timer = self.turn_display_duration
+                
+                if self.turn_display_timer > 0:
+                    self.combat.next_turn_player(self.screen)
+                    self.turn_display_timer -= 1
+
+                    if self.turn_display_timer == 0:
+                        self.combat.turn = 'minigame'
 
             
             elif minigame_chosed == '2':
@@ -620,7 +635,14 @@ class Game01:
                         
                     self.map.minigame.finished = False
                     self.reset_minigame2()
-                    self.combat.turn = 'minigame'
+                    self.turn_display_timer = self.turn_display_duration
+                
+                if self.turn_display_timer > 0:
+                    self.combat.next_turn_player(self.screen)
+                    self.turn_display_timer -= 1
+                
+                    if self.turn_display_timer == 0:
+                        self.combat.turn = 'minigame'
             
 
             elif minigame_chosed == '4':
@@ -629,7 +651,14 @@ class Game01:
                 if self.map.minigame.finished:
                     self.map.minigame.finished = False
                     self.reset_minigame4()
-                    self.combat.turn = 'minigame'
+                    self.turn_display_timer = self.turn_display_duration
+                
+                if self.turn_display_timer > 0:
+                    self.combat.next_turn_player(self.screen)
+                    self.turn_display_timer -= 1
+
+                    if self.turn_display_timer == 0:
+                        self.combat.turn = 'minigame'
         
 
         elif self.combat.turn == 'minigame':  
@@ -640,10 +669,16 @@ class Game01:
                     self.combat.enemy.damage(self.map.player.power)
 
                 self.map.minigame.finished = False
-                self.combat.turn = 'enemy_turn'
                 self.map.minigame.COLOR = (0, 0, 0)
                 self.map.minigame.POS_X = self.map.minigame.x
-                
+                self.turn_display_timer = self.turn_display_duration
+            
+            if self.turn_display_timer > 0:
+                self.combat.next_turn_enemy(self.screen)
+                self.turn_display_timer -= 1
+
+                if self.turn_display_timer == 0:
+                    self.combat.turn = 'enemy_turn'                
 
 
     # ═════════════════════════════════════════════════════════════════════════

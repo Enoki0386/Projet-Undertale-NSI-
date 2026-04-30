@@ -33,9 +33,9 @@ class Boss(animation.AnimateSprite):
     
     def main_health_bar(self, surface):
         '''Affiche une grande barre de vie en bas à gauche de l'écran'''
-        pygame.draw.rect(surface, (200, 0, 0), (20, 60, self.max_health * 8, 40))
-        pygame.draw.rect(surface, (80, 210, 40), (20, 60, max(0, self.health) * 8, 40))
-        pygame.draw.rect(surface, (255, 255, 255), (20, 60, self.max_health * 8, 40), 1)
+        pygame.draw.rect(surface, (200, 0, 0), (20, 40, self.max_health, 40))
+        pygame.draw.rect(surface, (80, 210, 40), (20, 40, max(0, self.health), 40))
+        pygame.draw.rect(surface, (255, 255, 255), (20, 40, self.max_health , 40), 1)
 
 
 class Samurai(animation.AnimateSprite):
@@ -61,9 +61,9 @@ class Samurai(animation.AnimateSprite):
 
     def main_health_bar(self, surface):
         '''Affiche une grande barre de vie en bas à gauche de l'écran'''
-        pygame.draw.rect(surface, (200, 0, 0), (20, 60, self.max_health * 8, 40))
-        pygame.draw.rect(surface, (80, 210, 40), (20, 60, max(0, self.health) * 8, 40))
-        pygame.draw.rect(surface, (255, 255, 255), (20, 60, self.max_health * 8, 40), 1)
+        pygame.draw.rect(surface, (200, 0, 0), (20, 40, self.max_health, 40))
+        pygame.draw.rect(surface, (80, 210, 40), (20, 40, max(0, self.health), 40))
+        pygame.draw.rect(surface, (255, 255, 255), (20, 40, self.max_health, 40), 1)
 
 
 class Ghost(animation.AnimateSprite):
@@ -89,6 +89,6 @@ class Ghost(animation.AnimateSprite):
 
     def main_health_bar(self, surface):
         '''Affiche une grande barre de vie en bas à gauche de l'écran'''
-        pygame.draw.rect(surface, (200, 0, 0), (20, 60, self.max_health * 8, 40))
-        pygame.draw.rect(surface, (80, 210, 40), (20, 60, max(0, self.health) * 8, 40))
-        pygame.draw.rect(surface, (255, 255, 255), (20, 60, self.max_health * 8, 40), 1)
+        pygame.draw.rect(surface, (200, 0, 0), (20, 40, self.max_health, 40))
+        pygame.draw.rect(surface, (80, 210, 40), (20, 40, max(0, self.health), 40))
+        pygame.draw.rect(surface, (255, 255, 255), (20, 40, self.max_health, 40), 1)

@@ -12,11 +12,18 @@ class Combat:
         self.actions = ['Attaquer', 'Défendre', 'Fuir']
         self.selected_action = 0 # index de l'action dans la liste
 
+        # police
+        self.font = pygame.font.Font("assets/PixelOperator8-Bold.ttf", 24)
+
+        # des données de minigame pour next turn
+        self.width = 880 
+        self.height = 520
+        self.x = 100 
+        self.y = 100 
+
 
     def draw_actions(self, screen, screen_width, screen_height):
 
-        font = pygame.font.Font(None, 36)
-        
         # boîte principale
         pygame.draw.rect(screen, (0, 0, 0), (50, screen_height - 200, screen_width - 100, 180), border_radius=10)
         pygame.draw.rect(screen, (255, 255, 255), (50, screen_height - 200, screen_width - 100, 180), 2, border_radius=10)
@@ -24,11 +31,11 @@ class Combat:
         # actions
         for i in range(len(self.actions)):
             color = (255, 255, 0) if i == self.selected_action else (255, 255, 255)
-            text = font.render(self.actions[i], True, color)
-            screen.blit(text, (100 + i * 200, screen_height - 150))
+            text = self.font.render(self.actions[i], True, color)
+            screen.blit(text, (100 + i * 350, screen_height - 150))
         
         # stats ennemi
-        enemy_text = font.render(f'{self.enemy.health} / {self.enemy.max_health}', True, (255, 255, 255))
+        enemy_text = self.font.render(f'{self.enemy.health} / {self.enemy.max_health}', True, (255, 255, 255))
         screen.blit(enemy_text, (screen_width // 2 - 50, 50))
     
 
@@ -53,10 +60,14 @@ class Combat:
         pygame.draw.rect(screen, (0, 0, 0), (self.x, self.y, self.width, self.height), border_radius=10)
         pygame.draw.rect(screen, (255, 255, 255), (self.x, self.y, self.width, self.height), 2, border_radius=10)
 
-        font = pygame.font.Font(None, 36)
         text = 'Enemy turn !'
-        text_surface = font.render(text, True, (255, 255, 255))
-        screen.blit(text_surface, 500, 300)
+        text_surface = self.font.render(text, True, (255, 255, 255))
+
+        
+        text_x = self.x + (self.width - text_surface.get_width()) // 2
+        text_y = self.y + (self.height - text_surface.get_height()) // 2
+
+        screen.blit(text_surface, (text_x, text_y))
 
 
     def next_turn_player(self, screen):
@@ -64,7 +75,10 @@ class Combat:
         pygame.draw.rect(screen, (0, 0, 0), (self.x, self.y, self.width, self.height), border_radius=10)
         pygame.draw.rect(screen, (255, 255, 255), (self.x, self.y, self.width, self.height), 2, border_radius=10)
 
-        font = pygame.font.Font(None, 36)
         text = 'Player turn !'
-        text_surface = font.render(text, True, (255, 255, 255))
-        screen.blit(text_surface, 500, 300)
+        text_surface = self.font.render(text, True, (255, 255, 255))
+
+        text_x = self.x + (self.width - text_surface.get_width()) // 2
+        text_y = self.y + (self.height - text_surface.get_height()) // 2
+
+        screen.blit(text_surface, (text_x, text_y))
