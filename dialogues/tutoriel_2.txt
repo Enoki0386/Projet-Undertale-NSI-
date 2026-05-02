@@ -1,0 +1,5 @@
+Important
+Utilisez les fleches du claviers
+pour interragir lors des minijeux
+Mais aussi la barre ESPACE 
+et votre curseur

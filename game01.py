@@ -25,6 +25,9 @@ class Game01:
         self.objects            = {}
         self.current_npc        = None
 
+        # pour lancer le 2e tutoriel
+        self.tutoriel_2         = True
+
         self.combat             = None # système de combat off (s'active dans le run)
         self.in_combat_before   = False # permet de ne pas relancer le combat
 
@@ -244,6 +247,9 @@ class Game01:
         # je crée les boites de dialogues
         self.current_npc.draw_dialogue(self.screen, self.width, self.height)
 
+        # je passe au prochain tutoriel (que 2)
+        #self.tutoriel = Tutoriel('tutoriel_2')
+
 
     def update_tutoriel(self, cam_x, cam_y):
 
@@ -396,6 +402,8 @@ class Game01:
                             
                             if self.tutoriel.finished:
                                 self.state = 'exploration'
+                                self.tutoriel.finished = False
+                                self.tutoriel.dialogue_index = 0
                 
 
                 elif event.type == pygame.KEYUP:                # si la touche n'est pas appuyée
@@ -541,6 +549,7 @@ class Game01:
             # Aucune touche pressée et pas d'attaque → idle dans la dernière direction
             player.idle()
             self.map.update_player()
+
  
         # ── Animation et fin d'attaque ────────────────────────────────────────
         if player.attacking:
@@ -554,7 +563,7 @@ class Game01:
         if player.inventor:
             self.inventory(*pygame.mouse.get_pos())
 
- 
+
         # ── Monstres (IA + collisions + dégâts) ──────────────────────────────
         for monster in list(self.map.all_monsters):
  
@@ -575,15 +584,22 @@ class Game01:
                abs(player.rect.centery - monster.rect.centery) < 55:
                 monster.damage(self.map.player.power)
 
-            # permet de passer en mini jeu lorsqu'on s'approche du boss / CHANGEMENT ON PASSE EN COMBAT
-            if not self.minigame_active:
 
-                if (abs(player.rect.centerx - self.map.boss.rect.centerx) < 50 and abs(player.rect.centery - self.map.boss.rect.centery) < 50) and not self.in_combat_before:
-                    self.state = 'combat'
-                    self.combat = Combat(self.map.player, self.map.boss)
-                    self.index = self.map.boss_index
-                    self.in_combat_before = True
-                
+        # permet de passer en mini jeu lorsqu'on s'approche du boss / CHANGEMENT ON PASSE EN COMBAT
+        if not self.minigame_active:
+
+            if (abs(player.rect.centerx - self.map.boss.rect.centerx) < 50 and abs(player.rect.centery - self.map.boss.rect.centery) < 50) and not self.in_combat_before:
+                self.state = 'combat'
+                self.combat = Combat(self.map.player, self.map.boss)
+                self.index = self.map.boss_index
+                self.in_combat_before = True
+        
+
+        if self.tutoriel_2 and 700 < player.rect.x < 800 and 1300 < player.rect.y < 1400:
+            self.tutoriel = Tutoriel('tutoriel_2')
+            self.tutoriel_2 = False
+            self.state = 'tutoriel'
+            
 
         # ── NPC (juste animé) ──────────────────────────────
         for npc in self.map.npc_grp:

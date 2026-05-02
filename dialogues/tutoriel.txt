@@ -11,4 +11,4 @@ S : reculer
 E : ouvrir l inventaire
 F : interragir
 Maj : s'accroupir
-
+clic gauche : attaquer
