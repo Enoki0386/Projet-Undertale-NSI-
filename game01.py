@@ -3,6 +3,8 @@ pygame.init()
 from maps import Map
 from combat_system import Combat
 from tutoriel import Tutoriel
+from sons import bg_son
+
 # ------------------------------------------------------------------ 
 #  Init + touches de deplacements                                          
 # ------------------------------------------------------------------ 
@@ -37,9 +39,16 @@ class Game01:
         self.map        = Map()
         self.tutoriel   = Tutoriel('tutoriel')
 
+        # Initialiser le gestionnaire de sons
+        self.sons       = bg_son()
+
         self.init_inventory()
         self.give_start_item('start_sword')
         self.map.load_maps(1, 430, 540)
+
+        # Jouer la musique de la map 1
+        self.sons.play_music(1)
+        
         self.run()
     # ------------------------------------------------------------------ 
     #  COLLISIONS (x,y séparer pour eviter bug de colision)                                                         
@@ -290,6 +299,7 @@ class Game01:
             # --Événements--
             for event in pygame.event.get():        #.get() est un tuple de sortie de jeu
                 if event.type == pygame.QUIT:       # si l'événement est une sortie de jeu
+                    self.sons.stop_music()          # Arrêter la musique
                     running = False                 # la boucle du jeu est arrêtée
                     pygame.quit()
                     print('Fermeture du jeu')
@@ -305,10 +315,13 @@ class Game01:
                         if event.key == pygame.K_LSHIFT:
                             if 600 < px < 630 and 630 < py < 660:
                                 self.map.load_maps(2, 28, 653)
+                                self.sons.play_music(2)
                             elif 25 < px < 66 and 640 < py < 700:
                                 self.map.load_maps(1, 600, 630)
+                                self.sons.play_music(1)
                             elif 1300 < px < 1450 and 1000 < py < 1150:
                                 self.map.load_maps(3, 200, 100)
+                                self.sons.play_music(3)
                     
                         # Ramassage d'item
                         if event.key == pygame.K_f:
@@ -409,6 +422,7 @@ class Game01:
                         self.map.player.just_attack = True
                         self.map.player.attack()
                         self.map.player.anim_count  = 0
+                        self.sons.play_sword_slash()  # Joue le son d'épée
         
                 elif event.type == pygame.MOUSEBUTTONUP:
                     self.map.player.pressed[event.button] = False
