@@ -18,6 +18,7 @@ class bg_son:
         self.shield = "UIMisc_INTERFACE-Zap Select_HY_PC-002.wav"
         self.menu = "Menu (Full).mp3"
         self.talk = "keyboard sound.mp3"
+        self.over = "[UNDERTALE] Game Over Screen.mp3"
         
         # Dictionnaire pour stocker les musiques par map
         self.map_music = {
@@ -143,3 +144,23 @@ class bg_son:
             print("Son de dialogue lancé")
         except pygame.error as e:
             print(f"Erreur lors du chargement du son de dialogue: {e}")
+
+    def play_game_over(self):
+        """Joue la musique de game over en boucle."""
+        over_path = os.path.join(self.music_path, self.over)
+        
+        if not os.path.exists(over_path):
+            print(f"Fichier audio de game over non trouvé: {over_path}")
+            return
+        
+        try:
+            # Arrêter la musique actuelle
+            if pygame.mixer.music.get_busy():
+                pygame.mixer.music.fadeout(500)
+            
+            # Charger et jouer la musique de game over en boucle
+            pygame.mixer.music.load(over_path)
+            pygame.mixer.music.play(-1)  # -1 = boucle infinie
+            print("Musique de game over lancée")
+        except pygame.error as e:
+            print(f"Erreur lors du chargement de la musique de game over: {e}")
