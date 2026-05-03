@@ -256,8 +256,10 @@ class Game01:
         # je crée les boites de dialogues
         self.current_npc.draw_dialogue(self.screen, self.width, self.height)
 
-        # je passe au prochain tutoriel (que 2)
-        #self.tutoriel = Tutoriel('tutoriel_2')
+        if self.current_npc.name == 9:
+            player.temp_health = 15
+            player.max_temp_health = 15
+    
 
 
     def update_tutoriel(self, cam_x, cam_y):
@@ -443,7 +445,8 @@ class Game01:
             # -- État exploration --
             if self.state == 'exploration':
                 self.update_exploration(cam_x, cam_y)
-                self.map.player.attack_points(self.screen, 660)
+                self.map.player.attack_points(self.screen, 610)
+                self.map.player.bonus_health_bar(self.screen, 620)
                 self.map.player.main_health_bar(self.screen, 670)
                 self.map.player.protection_bar(self.screen, 720)
  
@@ -599,6 +602,12 @@ class Game01:
                 monster.damage(self.map.player.power)
 
 
+        if (abs(player.rect.centerx - self.map.boss.rect.centerx) < 200 and abs(player.rect.centery - self.map.boss.rect.centery) < 200) and self.tutoriel_2:
+            self.tutoriel = Tutoriel('tutoriel_2')
+            self.tutoriel_2 = False
+            self.state = 'tutoriel'
+
+
         # permet de passer en mini jeu lorsqu'on s'approche du boss / CHANGEMENT ON PASSE EN COMBAT
         if not self.minigame_active:
 
@@ -608,12 +617,6 @@ class Game01:
                 self.index = self.map.boss_index
                 self.in_combat_before = True
         
-
-        if self.tutoriel_2 and 700 < player.rect.x < 800 and 1300 < player.rect.y < 1400:
-            self.tutoriel = Tutoriel('tutoriel_2')
-            self.tutoriel_2 = False
-            self.state = 'tutoriel'
-            
 
         # ── NPC (juste animé) ──────────────────────────────
         for npc in self.map.npc_grp:

@@ -38,6 +38,9 @@ class Player01(animation.AnimateSprite):
         self.velocity       = 5             # vitesse de déplacement
         self.direction      = 'right'       # direction par defaut au lancement du jeu
 
+        self.temp_health     = 0           # ajout d'une barre de vie bonus avec interraction avec npc (3e map jsp plus lequel)
+        self.max_temp_health = 0
+       
         self.power          = 10            # points d'attaque du joueur
 
         self.protection = 0                 # armure du joueur (initialement nulle)
@@ -139,6 +142,13 @@ class Player01(animation.AnimateSprite):
         pygame.draw.rect(surface, (80, 210, 40), (20, screen_height - 60, max(0, self.health) * 8, 40))
         pygame.draw.rect(surface, (255, 255, 255), (20, screen_height - 60, self.max_health * 8, 40), 1)
     
+    def bonus_health_bar(self, surface, screen_height):
+        '''Affiche une barre de vie bonus du joueur qui est temporaire'''
+        if self.temp_health > 0:
+            pygame.draw.rect(surface, (128, 128, 128), (20, screen_height - 60, self.max_temp_health * 8, 40))
+            pygame.draw.rect(surface, (255, 255, 0), (20, screen_height - 60, max(0, self.temp_health) * 8, 40))
+            pygame.draw.rect(surface, (255, 255, 255), (20, screen_height - 60, self.max_temp_health * 8, 40), 1)       
+    
     def protection_bar(self, surface, screen_height):
         '''Affiche une barre mesurant le niveau d'armure du joueur (initialement nulle, s'augmente avec un bouclier)'''
         pygame.draw.rect(surface, (201, 229, 255), (20, screen_height - 60, self.max_protection * 8, 40))
@@ -157,7 +167,17 @@ class Player01(animation.AnimateSprite):
         if self.protection > 0:
             self.protection -= amount
             if self.protection < 0:
-                self.health += self.protection
+                amount = -self.protection  # surplus
                 self.protection = 0
-        else:
-            self.health = max(0, self.health - amount)
+            else:
+                return
+
+        if self.temp_health > 0:
+            self.temp_health -= amount
+            if self.temp_health < 0:
+                amount = -self.temp_health  # surplus
+                self.temp_health = 0
+            else:
+                return
+
+        self.health = max(0, self.health - amount)

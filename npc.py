@@ -3,7 +3,7 @@ import animation
 from animation import animations
 
 class NPC(animation.AnimateSprite): # 'animation.AnimateSprite' est sensé être dans les parenthèses pour l'animation. Ainsi pour engendrer les boites de dialogues
-    def __init__(self, x, y, filename, sprite):    # j'ai choisi de garder temporairement la classe Sprite. Lorsque l'animation sera requise oubliez pas de mettre l'animation dans le super
+    def __init__(self, x, y, filename, sprite, name):    # j'ai choisi de garder temporairement la classe Sprite. Lorsque l'animation sera requise oubliez pas de mettre l'animation dans le super
         super().__init__(sprite)
 
         # rectangle du joueur
@@ -11,6 +11,9 @@ class NPC(animation.AnimateSprite): # 'animation.AnimateSprite' est sensé être
         self.rect = pygame.Rect(x, y, w, h)
         self.rect.x = x
         self.rect.y = y 
+
+        # nom du npc
+        self.name = name
 
         # couleur des dialogues
         self.WHITE = (255, 255, 255) # -> texte

@@ -41,6 +41,7 @@ Map_settings = {
 Items_choice     = ['shield', 'heart', 'knife']
 Dialogues_choice = ['npc_1', 'npc_2', 'npc_3', 'npc_4', 'npc_5', 'npc_6', 'npc_7', 'npc_8', 'npc_9']
 Sprites_choice   = ['npc1_front', 'npc2_front', 'npc3_front']
+Npcs_names       = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 Npcs_pos         = [(350, 640), (230, 1410), (1353, 1136), (258, 653), (1396, 303), (853, 1171), (1200, 300), (300, 800), (1000, 1000)] # trois premiers tuple = map 1, trois milieu tuple = map 2, trois dernier tuple = map 3
 Boss_pos         = [(1060, 1410), (607, 873), (900, 1200)] # tuple 1 = map 1, tuple 2 = map 2, tuple 3 = map 3
 Monstre_nbr      = 5
@@ -160,17 +161,20 @@ class Map:
                 x = Npcs_pos[res][0]
                 y = Npcs_pos[res][1]
                 filename = Dialogues_choice[res]
+                name = Npcs_names[res]
             elif map == 2:
                 x = Npcs_pos[res + 3][0]
-                y = Npcs_pos[res + 3][0]
+                y = Npcs_pos[res + 3][1]
                 filename = Dialogues_choice[res + 3]
+                name = Npcs_names[res + 3]
             elif map == 3:
                 x = Npcs_pos[res + 6][0]
-                y = Npcs_pos[res + 6][0]
+                y = Npcs_pos[res + 6][1]
                 filename = Dialogues_choice[res + 6]
+                name = Npcs_names[res + 6]
                 
             sprite = Sprites_choice[res]
-            n = NPC(x, y, filename, sprite)
+            n = NPC(x, y, filename, sprite, name)
             # Transmet les limites de la map au npc pour le clamping
             n.map_width = self.width
             n.map_height = self.height
