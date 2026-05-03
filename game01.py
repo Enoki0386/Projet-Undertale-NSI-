@@ -3,6 +3,7 @@ pygame.init()
 from maps import Map
 from combat_system import Combat
 from tutoriel import Tutoriel
+from end import GameOverScreen
 from sons import bg_son
 
 # ------------------------------------------------------------------ 
@@ -41,6 +42,7 @@ class Game01:
         self.screen     = pygame.display.set_mode((self.width, self.height))
         self.map        = Map()
         self.tutoriel   = Tutoriel('tutoriel')
+        self.game_over_screen = GameOverScreen(self.screen)
 
         # Initialiser le gestionnaire de sons
         self.sons       = bg_son()
@@ -439,6 +441,21 @@ class Game01:
         
                 elif event.type == pygame.MOUSEBUTTONUP:
                     self.map.player.pressed[event.button] = False
+
+            # Check for game over
+            if self.map.player.health <= 0 and self.state not in ('game_over', 'tutoriel'):
+                self.state = 'game_over'
+                result = self.game_over_screen.run()
+                if result == 'restart':
+                    # Reset player health and position
+                    self.map.player.health = self.map.player.max_health
+                    self.map.player.rect.centerx = 430
+                    self.map.player.rect.centery = 540
+                    self.map.load_maps(1, 430, 540)
+                    self.sons.play_music(1)
+                    self.state = 'exploration'
+                else:
+                    running = False
 
             # ------------------------------------------------------------------ 
             #  Dépalcement                                              
