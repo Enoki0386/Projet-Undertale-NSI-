@@ -2,6 +2,7 @@ import pygame
 import sys
 import math
 import random
+from sons import bg_son
 
 # ─────────────────────────────────────────────────────────────────────────────
 #  Palette ambiance
@@ -84,6 +85,9 @@ class TitleScreen:
         # Timer pour l'effet de pulsation du titre
         self.tick = 0.0
 
+        # Initialiser le gestionnaire de sons
+        self.sons = bg_son()
+        self.sons.play_menu_loop()
 
     def run(self) -> str:
         clock = pygame.time.Clock()
