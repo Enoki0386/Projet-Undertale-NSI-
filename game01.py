@@ -155,6 +155,7 @@ class Game01:
         for slot in self.objects.values():
             if not slot[1]:
                 slot[1], slot[2], slot[3] = True, item.image, item.name
+                self.sons.play_recup_shield()  # Joue le son du bouclier
                 break
         
         if item.name == 'shield':
@@ -330,7 +331,7 @@ class Game01:
                             elif 1300 < px < 1450 and 1000 < py < 1150:
                                 self.map.load_maps(3, 200, 100)
                                 self.sons.play_music(3)
-                    
+                                
                         # Ramassage d'item
                         if event.key == pygame.K_f:
                             for item in self.map.items_group:
@@ -338,6 +339,7 @@ class Game01:
                                 abs(self.map.player.rect.y - item.rect.y) < 25:     #pour éviter d'etre trop long on met un \
                                     if item.name == 'heart':
                                         self.map.player.health = min(self.map.player.max_health, self.map.player.health + 10) # évite de dépasser les PV max
+                                        self.sons.play_recup_coeur()  # Joue le son du cœur dans sons
                                         item.kill()
                                     else:
                                         self.put_in_inventory(item)
@@ -354,6 +356,7 @@ class Game01:
                             if event.key == pygame.K_f and abs(player.rect.x - npc.rect.x) < 50 and abs(player.rect.y - npc.rect.y) < 50:
                                 self.current_npc = npc
                                 self.state = 'dialogue'
+                                self.sons.play_talk()  # Joue le son de dialogue dans sons
                                 break
                     
 
