@@ -14,6 +14,10 @@ class bg_son:
         self.music_file2 = "005. Ruins (UNDERTALE Soundtrack) - Toby Fox.mp3"
         self.music_file3 = "Unnerving Vibe.mp3"
         self.epeeslash = "DSGNMisc_MELEE-Sword Slash_HY_PC-001.wav"
+        self.coeur = "WHSH_MOVEMENT-Bubble Laser Swish_HY_PC-001.wav"
+        self.shield = "UIMisc_INTERFACE-Zap Select_HY_PC-002.wav"
+        self.menu = "Menu (Full).mp3"
+        self.talk = "keyboard sound.mp3"
         
         # Dictionnaire pour stocker les musiques par map
         self.map_music = {
@@ -24,7 +28,9 @@ class bg_son:
         
         # Sons d'effets
         self.sound_effects = {
-            "sword_slash": pygame.mixer.Sound(os.path.join(self.music_path, self.epeeslash))
+            "sword_slash": pygame.mixer.Sound(os.path.join(self.music_path, self.epeeslash)),
+            "recup_coeur": pygame.mixer.Sound(os.path.join(self.music_path, self.coeur)),
+            "recup_shield": pygame.mixer.Sound(os.path.join(self.music_path, self.shield))
         }
         
         # Dictionnaire pour les effets sonores
@@ -80,10 +86,60 @@ class bg_son:
     def set_music_volume(self, volume):
         """Définit le volume de la musique (0.0 à 1.0)."""
         pygame.mixer.music.set_volume(max(0.0, min(1.0, volume)))
-    
+
     def play_sword_slash(self):
         """Joue le son de coup d'épée."""
         try:
             self.sound_effects["sword_slash"].play()
         except Exception as e:
             print(f"Erreur lors du chargement du son d'épée: {e}")
+
+    def play_recup_coeur(self):
+        """Joue le son de récupération de cœur."""
+        try:
+            self.sound_effects["recup_coeur"].play()
+        except Exception as e:
+            print(f"Erreur lors du chargement du son de cœur: {e}")
+
+    def play_recup_shield(self):
+        """Joue le son de récupération de bouclier."""
+        try:
+            self.sound_effects["recup_shield"].play()
+        except Exception as e:
+            print(f"Erreur lors du chargement du son de bouclier: {e}")
+
+    def play_menu_loop(self):
+        """Joue la musique du menu en boucle."""
+        menu_path = os.path.join(self.music_path, self.menu)
+        
+        if not os.path.exists(menu_path):
+            print(f"Fichier audio du menu non trouvé: {menu_path}")
+            return
+        
+        try:
+            # Arrêter la musique actuelle
+            if pygame.mixer.music.get_busy():
+                pygame.mixer.music.fadeout(500)
+            
+            # Charger et jouer la musique du menu en boucle
+            pygame.mixer.music.load(menu_path)
+            pygame.mixer.music.play(-1)  # -1 = boucle infinie
+            print("Musique du menu lancée")
+        except pygame.error as e:
+            print(f"Erreur lors du chargement de la musique du menu: {e}")
+
+    def play_talk(self):
+        """Joue le son de dialogue NPC."""
+        talk_path = os.path.join(self.music_path, self.talk)
+        
+        if not os.path.exists(talk_path):
+            print(f"Fichier audio de dialogue non trouvé: {talk_path}")
+            return
+        
+        try:
+            # Charger et jouer le son de dialogue
+            talk_sound = pygame.mixer.Sound(talk_path)
+            talk_sound.play()
+            print("Son de dialogue lancé")
+        except pygame.error as e:
+            print(f"Erreur lors du chargement du son de dialogue: {e}")
