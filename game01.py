@@ -670,6 +670,9 @@ class Game01:
                     self.map.minigame.move_right()
 
                 if self.map.minigame.finished:
+                    if not self.map.minigame.win:
+                        self.combat.player.damage(self.map.boss.attack)
+
                     self.map.minigame.finished = False
                     self.reset_minigame()
                     self.turn_display_timer = self.turn_display_duration
@@ -705,6 +708,9 @@ class Game01:
                 self.launch_minigame_4(self.screen)
 
                 if self.map.minigame.finished:
+                    if not self.map.minigame.win:
+                        self.combat.player.damage(self.map.boss.attack)
+                        
                     self.map.minigame.finished = False
                     self.reset_minigame4()
                     self.turn_display_timer = self.turn_display_duration
