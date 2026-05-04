@@ -94,6 +94,7 @@ class GameOverScreen:
         clock = pygame.time.Clock()
 
         while True:
+            pygame.mouse.set_visible(True)
             dt     = clock.tick(60) / 1000.0
             self.tick += dt
             mx, my = pygame.mouse.get_pos()
