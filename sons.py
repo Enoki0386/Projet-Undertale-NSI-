@@ -17,7 +17,7 @@ class bg_son:
         self.coeur = "WHSH_MOVEMENT-Bubble Laser Swish_HY_PC-001.wav"
         self.shield = "UIMisc_INTERFACE-Zap Select_HY_PC-002.wav"
         self.menu = "Menu (Full).mp3"
-        self.talk = "keyboard sound.mp3"
+        self.talk = "Text_sound.mp3"
         self.over = "[UNDERTALE] Game Over Screen.mp3"
         
         # Dictionnaire pour stocker les musiques par map
