@@ -728,7 +728,10 @@ class Game01:
 
             if self.map.minigame.finished:
                 if self.map.minigame.COLOR == (0, 128, 0): # win
-                    self.combat.enemy.damage(self.map.player.power)
+                    self.combat.enemy.damage(self.map.player.huge_power)
+
+                    if self.combat.enemy.health == 0:
+                        self.state = 'exploration'
 
                 self.map.minigame.finished = False
                 self.map.minigame.COLOR = (0, 0, 0)
