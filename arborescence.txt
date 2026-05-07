@@ -1,0 +1,160 @@
+Structure du dossier pour le volume Windows
+Le num‚ro de s‚rie du volume est DA01-BBEC
+C:.
+|   animation.py
+|   arborescence.txt
+|   boss.py
+|   combat_system.py
+|   end.py
+|   game01.py
+|   item.py
+|   knight.py
+|   main01.py
+|   maps.py
+|   minigame.py
+|   npc.py
+|   player01.py
+|   README.md
+|   sons.py
+|   title.py
+|   tutoriel.py
+|   
++---assets
+|       PixelOperator8-Bold.ttf
+|       
++---carte1
+|       carte_undertale._walls.csv
+|       carte_undertale_background.png
+|       carte_undertale_path.png
+|       carte_undertale_walls.png
+|       
++---carte2
+|       carte_undertale_2_background.png
+|       carte_undertale_2_path.png
+|       carte_undertale_2_walls.csv
+|       carte_undertale_2_walls.png
+|       
++---carte3
+|       carte_undertale_3_background.png
+|       carte_undertale_3_path.png
+|       carte_undertale_3_walls.csv
+|       carte_undertale_3_walls.png
+|       
++---dialogues
+|       npc_1.txt
+|       npc_2.txt
+|       npc_3.txt
+|       npc_4.txt
+|       npc_5.txt
+|       npc_6.txt
+|       npc_7.txt
+|       npc_8.txt
+|       npc_9.txt
+|       tutoriel.txt
+|       tutoriel_2.txt
+|       
++---Musics
+|       005. Ruins (UNDERTALE Soundtrack) - Toby Fox.mp3
+|       deuslower-dark-fantasy-ambient-dungeon-synth-music-281592.mp3
+|       DSGNMisc_MELEE-Sword Slash_HY_PC-001.wav
+|       keyboard sound.mp3
+|       Menu (Full).mp3
+|       Text_sound.mp3
+|       UIMisc_INTERFACE-Zap Select_HY_PC-002.wav
+|       Unnerving Vibe.mp3
+|       WHSH_MOVEMENT-Bubble Laser Swish_HY_PC-001.wav
+|       [UNDERTALE] Game Over Screen.mp3
+|       
++---objects
+|       heart.png
+|       knife.png
+|       shield.png
+|       skull.png
+|       start_sword.png
+|       
++---Sprites
+|       ATTACK 1.png
+|       ATTACK 1b.png
+|       ATTACK 2.png
+|       ATTACK 2b.png
+|       ATTACK 3.png
+|       ATTACK 3b.png
+|       attack1_down.png
+|       attack1_left.png
+|       attack1_right.png
+|       attack1_up.png
+|       attack2_down.png
+|       attack2_left.png
+|       attack2_right.png
+|       attack2_up.png
+|       DEATH.png
+|       DEATHb.png
+|       DEFEND.png
+|       DEFENDb.png
+|       dragon_basic_state.png
+|       dragon_fighting.png
+|       dragon_final_state.png
+|       dragon_lord_death_160x160.png
+|       dragon_walking.png
+|       ghost_idle.png
+|       HURT.png
+|       HURTb.png
+|       IDLE.png
+|       IDLEb.png
+|       idle_down.png
+|       idle_left.png
+|       idle_right.png
+|       idle_up.png
+|       JUMP.png
+|       JUMPb.png
+|       npc1_back.png
+|       npc1_front.png
+|       npc1_left.png
+|       npc2_back.png
+|       npc2_front.png
+|       npc2_left.png
+|       npc3_back.png
+|       npc3_front.png
+|       npc3_left.png
+|       RUN.png
+|       RUNb.png
+|       run_down.png
+|       run_left.png
+|       run_right.png
+|       run_up.png
+|       samourai_IDLE.png
+|       samourai_RUN.png
+|       WALKb.png
+|       WALK_left.png
+|       WALK_right.png
+|       
+\---__pycache__
+        animation.cpython-313.pyc
+        animation.cpython-314.pyc
+        boss.cpython-313.pyc
+        boss.cpython-314.pyc
+        combat_system.cpython-313.pyc
+        combat_system.cpython-314.pyc
+        end.cpython-313.pyc
+        end.cpython-314.pyc
+        game01.cpython-313.pyc
+        game01.cpython-314.pyc
+        item.cpython-313.pyc
+        item.cpython-314.pyc
+        knight.cpython-313.pyc
+        knight.cpython-314.pyc
+        maps.cpython-313.pyc
+        maps.cpython-314.pyc
+        minigame.cpython-313.pyc
+        minigame.cpython-314.pyc
+        npc.cpython-313.pyc
+        npc.cpython-314.pyc
+        player01.cpython-313.pyc
+        player01.cpython-314.pyc
+        sons.cpython-313.pyc
+        sons.cpython-314.pyc
+        title.cpython-313.pyc
+        title.cpython-314.pyc
+        tutoriel.cpython-313.pyc
+        tutoriel.cpython-314.pyc
+        

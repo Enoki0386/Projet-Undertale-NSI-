@@ -3,21 +3,18 @@ from random import randint
 
 class Projectile(pygame.sprite.Sprite):
 
-    def __init__(self):
+    def __init__(self, x, y, speed):
         super().__init__()
-        self.image = pygame.Surface((15, 15))
-        self.image.fill((255, 255, 255))
 
-        self.skull_image = pygame.image.load('objects/skull.png')
-        self.skull_image = pygame.transform.scale(self.skull_image, (15, 15))
+        # définition des variables indispensables
+        self.image = pygame.image.load('objects/skull.png')
+        self.image = pygame.transform.scale(self.image, (15, 15))
 
         self.rect = self.image.get_rect()
-        self.rect.x = randint(100, 880)
-        self.rect.y = 100
-        self.speed = 3
+        self.place_rect(x, y)
 
-        self.y = randint(100, 520)
-    
+        self.set_speed(speed)
+
 
     def move(self):
 
@@ -40,14 +37,20 @@ class Projectile(pygame.sprite.Sprite):
             self.rect.y += step_y
     
 
-    def draw_projectile(self, screen):
-        
-        pygame.draw.rect(screen, (255, 255, 255), (self.rect.x, self.rect.y, self.rect.width, self.rect.height))
+    def place_rect(self, x, y):
+
+        self.rect.x = x
+        self.rect.y = y
     
 
-    def blit_projectile(self, screen):
+    def set_speed(self, speed):
 
-        screen.blit(self.skull_image, (self.rect.x, self.y))
+        self.speed = speed
+
+
+    def draw_projectile(self, screen):
+        
+        screen.blit(self.image, (self.rect.x, self.rect.y))
 
 
 class Minigame(pygame.sprite.Sprite):
@@ -56,10 +59,10 @@ class Minigame(pygame.sprite.Sprite):
 
         super().__init__()
         # définition des variables de l'écran de jeu
-        self.width = 880 # 400
-        self.height = 520 # 340
-        self.x = 100 # 340
-        self.y = 100 # 280
+        self.width = 880 
+        self.height = 520 
+        self.x = 100 
+        self.y = 100 
 
         # définition des variables pour notre curseur qui est un coeur
         self.image = pygame.image.load('objects/heart.png')
@@ -206,8 +209,11 @@ class Minigame(pygame.sprite.Sprite):
             self.win = False
             return 
 
-        if self.spawn_time >= 60: 
-            self.projectiles.add(Projectile())
+        if self.spawn_time >= 60:
+            x = randint(100, 880)
+            y = 100
+            speed = 3
+            self.projectiles.add(Projectile(x, y, speed))
             self.spawn_time = 0
 
         for projectile in self.projectiles:
@@ -334,7 +340,7 @@ class Minigame(pygame.sprite.Sprite):
 
         # projectiles
         for projectile in self.projectiles:
-            projectile.blit_projectile(screen)
+            projectile.draw_projectile(screen)
     
 
     def update_minigame_4(self):
@@ -354,7 +360,10 @@ class Minigame(pygame.sprite.Sprite):
             return 
 
         if self.spawn_time >= 60: 
-            self.projectiles.add(Projectile())
+            x = randint(100, 880)
+            y = randint(100, 520)
+            speed = 1
+            self.projectiles.add(Projectile(x, y, speed))
             self.spawn_time = 0
 
         for projectile in self.projectiles:

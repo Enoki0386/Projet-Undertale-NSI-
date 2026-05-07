@@ -42,6 +42,7 @@ class Player01(animation.AnimateSprite):
         self.max_temp_health = 0
        
         self.power          = 10            # points d'attaque du joueur
+        self.huge_power     = 200           # points d'attaque contre les boss en mini - jeu
 
         self.protection = 0                 # armure du joueur (initialement nulle)
         self.max_protection = 25            # avec un bouclier
