@@ -101,7 +101,7 @@ animations = {
 }
 
 # ------------------------------------------------------------------
-# Animé les animation ? (by Matis)
+# Animation
 # ------------------------------------------------------------------
 class AnimateSprite(pygame.sprite.Sprite):
     '''Création de la classe AnimateSprite permettant d'animer des sprites, ainsi elle hérite de la classe pygame sprite.Sprite, récupérant ses caractéristiques'''

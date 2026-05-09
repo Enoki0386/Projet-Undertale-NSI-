@@ -13,7 +13,7 @@ class Tutoriel:
         self.nb_lettres = 0.0
         self.vitesse = 1.5
         self.timer = 0      # ← manquait
-        self.delai = 180    # ← manquait (3s à 60fps)
+        self.delai = 90    # ← manquait (3s à 60fps)
 
         self.font = pygame.font.Font('assets/PixelOperator8-Bold.ttf', 24)
         self.small_font = pygame.font.Font('assets/PixelOperator8-Bold.ttf', 16)

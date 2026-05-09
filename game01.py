@@ -5,6 +5,7 @@ from combat_system import Combat
 from tutoriel import Tutoriel
 from end import GameOverScreen
 from sons import bg_son
+from cinematique import Cinematique
 
 # ------------------------------------------------------------------ 
 #  Init + touches de deplacements                                          
@@ -27,6 +28,19 @@ class Game01:
         self.index              = None # l'index qui permet de choisir le mini jeu
         self.objects            = {}
         self.current_npc        = None
+
+        # gestion des cinématiques du boss
+        self.cinematique = None
+        self.phase_mi_vie = False
+        self.phase_mort = False
+
+        self.dialogues = {
+            0 : ['boss_1_1', 'boss_1_2', 'boss_1_3'],
+            1 : ['boss_2_1', 'boss_2_2', 'boss_2_3'],
+            2 : ['boss_3_1', 'boss_3_2', 'boss_3_3']
+        }
+
+        self.filenames = ['dragon_state', 'samurai_idle', 'ghost_idle']
 
         # pour lancer le 2e tutoriel
         self.tutoriel_2         = True
@@ -291,6 +305,15 @@ class Game01:
         # j'update le tut
         self.tutoriel.update()
         self.tutoriel.draw_dialogue(self.screen, self.width, self.height)
+    
+
+    def update_cinematique(self):
+
+        self.cinematique.update()
+        self.cinematique.draw_cinematique(self.screen, self.width, self.height)
+
+        if self.cinematique.finished:
+            self.state = 'minigame'
 
     # ------------------------------------------------------------------ 
     #  Main boucle                                                       
@@ -410,7 +433,11 @@ class Game01:
                             self.combat.confirm_action()
                             
                             if self.combat.result == 'combat':
-                                self.state = 'minigame'
+                                # intro — une seule fois au lancement
+                                if self.cinematique is None:
+                                    self.cinematique = Cinematique(self.filenames[self.index], self.dialogues[self.index][0])
+                                    self.phase_cinematique = 'intro'
+                                    self.state = 'cinematique'
                             else:
                                 self.state = 'exploration'
                     
@@ -487,6 +514,9 @@ class Game01:
             
             elif self.state == 'tutoriel':
                 self.update_tutoriel(cam_x, cam_y)
+            
+            elif self.state == 'cinematique':
+                self.update_cinematique()
                 
  
             pygame.display.flip()
@@ -658,6 +688,21 @@ class Game01:
         minigame_chosed = self.list_minigame[index]
         self.combat.enemy.main_health_bar(self.screen)
 
+        if self.combat.enemy.health <= self.combat.enemy.max_health / 2:
+            # mi-vie
+            if not self.phase_mi_vie and self.map.boss.health <= self.map.boss.max_health // 2:
+                self.phase_mi_vie = True
+                self.cinematique = Cinematique(self.filenames[self.index], self.dialogues[self.index][1])
+                self.state = 'cinematique'
+        
+        elif self.combat.enemy.health == 0:
+            # mort
+            if not self.phase_mort and self.map.boss.health <= 0:
+                self.phase_mort = True
+                self.cinematique = Cinematique(self.filenames[self.index], self.dialogues[self.index][2])
+                self.state = 'cinematique'
+
+
         if self.combat.turn == 'enemy_turn':
             
             if minigame_chosed == '1':
@@ -761,8 +806,7 @@ class Game01:
         self.screen.blit(self.map.walls, (-cam_x, -cam_y))
         
         # rendu du combat
-        self.combat.draw_actions(self.screen, self.width, self.height)
-        
+        self.combat.draw_actions(self.screen, self.width, self.height) 
 
         if self.combat.finished:
             self.state = 'exploration'
