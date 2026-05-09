@@ -29,6 +29,10 @@ class Game01:
         self.objects            = {}
         self.current_npc        = None
 
+        # gestion des événements par rapport aux maps
+        self.cartes             = [1, 2, 3]
+        self.map_actuelle       = self.cartes[0]
+
         # gestion des cinématiques du boss
         self.cinematique = None
         self.phase_mi_vie = False
@@ -312,7 +316,9 @@ class Game01:
         self.cinematique.update()
         self.cinematique.draw_cinematique(self.screen, self.width, self.height)
 
-        if self.cinematique.finished:
+        if self.cinematique.finished and self.phase_mort:
+            self.state = 'exploration'
+        elif self.cinematique.finished:
             self.state = 'minigame'
 
     # ------------------------------------------------------------------ 
@@ -347,15 +353,22 @@ class Game01:
                         # Changement de map
                         px, py = self.map.player.rect.centerx, self.map.player.rect.centery
                         if event.key == pygame.K_LSHIFT:
-                            if 600 < px < 630 and 630 < py < 660:
+                            if 600 < px < 630 and 630 < py < 660 and self.map.boss.health == 0 and self.map_actuelle == 1:
+                                self.map_actuelle = self.cartes[1]
                                 self.map.load_maps(2, 28, 653)
                                 self.sons.play_music(2)
-                            elif 25 < px < 66 and 640 < py < 700:
+                            elif 25 < px < 66 and 640 < py < 700 and self.map_actuelle == 2:
+                                self.map_actuelle = self.cartes[0]
                                 self.map.load_maps(1, 600, 630)
                                 self.sons.play_music(1)
-                            elif 1300 < px < 1450 and 1000 < py < 1150:
+                            elif 1300 < px < 1450 and 1000 < py < 1150 and self.map.boss.health == 0 and self.map_actuelle == 2 and self.map.boss.health == 0:
+                                self.map_actuelle = self.cartes[2]
                                 self.map.load_maps(3, 200, 100)
                                 self.sons.play_music(3)
+                            elif 1300 < px < 1450 and 1000 < py < 1150 and self.map_actuelle == 3:
+                                self.map_actuelle = self.cartes[1]
+                                self.map.load_maps(2, 200, 100)
+                                self.sons.play_music(2)
                                 
                         # Ramassage d'item
                         if event.key == pygame.K_f:
@@ -546,7 +559,8 @@ class Game01:
             self.screen.blit(npc.image, (npc.rect.x - cam_x, npc.rect.y - cam_y))
  
         # Affichage du boss
-        self.screen.blit(self.map.boss.image, (self.map.boss.rect.x - cam_x, self.map.boss.rect.y - cam_y))
+        if self.map.boss.health > 0:
+            self.screen.blit(self.map.boss.image, (self.map.boss.rect.x - cam_x, self.map.boss.rect.y - cam_y))
 
  
         # Affichage du joueur (toujours centré à l'écran)
@@ -688,20 +702,6 @@ class Game01:
         minigame_chosed = self.list_minigame[index]
         self.combat.enemy.main_health_bar(self.screen)
 
-        if self.combat.enemy.health <= self.combat.enemy.max_health / 2:
-            # mi-vie
-            if not self.phase_mi_vie and self.map.boss.health <= self.map.boss.max_health // 2:
-                self.phase_mi_vie = True
-                self.cinematique = Cinematique(self.filenames[self.index], self.dialogues[self.index][1])
-                self.state = 'cinematique'
-        
-        elif self.combat.enemy.health == 0:
-            # mort
-            if not self.phase_mort and self.map.boss.health <= 0:
-                self.phase_mort = True
-                self.cinematique = Cinematique(self.filenames[self.index], self.dialogues[self.index][2])
-                self.state = 'cinematique'
-
 
         if self.combat.turn == 'enemy_turn':
             
@@ -774,9 +774,20 @@ class Game01:
             if self.map.minigame.finished:
                 if self.map.minigame.COLOR == (0, 128, 0): # win
                     self.combat.enemy.damage(self.map.player.huge_power)
-
-                    if self.combat.enemy.health == 0:
-                        self.state = 'exploration'
+                
+                    if self.combat.enemy.health <= self.combat.enemy.max_health / 2:
+                        # mi-vie
+                        if not self.phase_mi_vie and self.map.boss.health <= self.map.boss.max_health // 2:
+                            self.phase_mi_vie = True
+                            self.cinematique = Cinematique(self.filenames[self.index], self.dialogues[self.index][1])
+                            self.state = 'cinematique'
+                    
+                    if self.combat.enemy.health <= 0:
+                        # mort
+                        if not self.phase_mort and self.map.boss.health <= 0:
+                            self.phase_mort = True
+                            self.cinematique = Cinematique(self.filenames[self.index], self.dialogues[self.index][2])
+                            self.state = 'cinematique'
 
                 self.map.minigame.finished = False
                 self.map.minigame.COLOR = (0, 0, 0)

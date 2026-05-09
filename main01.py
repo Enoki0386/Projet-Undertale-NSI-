@@ -9,7 +9,7 @@ if __name__ == '__main__':
     pygame.display.set_caption('Undertale')
  
     # Lance l'écran titre → attend le choix du joueur
-    action = TitleScreen(screen).run()
+    action = TitleScreen(screen).run() 
  
     if action == 'play':
         # On passe l'écran déjà créé à Game01 pour éviter de recréer la fenêtre

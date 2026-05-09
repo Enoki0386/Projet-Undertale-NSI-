@@ -184,6 +184,7 @@ class Minigame(pygame.sprite.Sprite):
         # mini jeu
         pygame.draw.rect(screen, (0, 0, 0), (self.x, self.y, self.width, self.height), border_radius=10)
         pygame.draw.rect(screen, (255, 255, 255), (self.x, self.y, self.width, self.height), 2, border_radius=10)
+        pygame.draw.line(screen, (255, 255, 255), (self.x, self.y + self.height - self.rect.height - 5), (self.x + self.width, self.y + self.height - self.rect.height - 5), 1)
 
         # curseur
         screen.blit(self.image, (self.rect.x, self.rect.y))
