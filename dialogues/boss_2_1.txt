@@ -1,4 +1,6 @@
-Tu te présentes enfin à moi ...
+Tu te presentes enfin a moi ...
 Je suis le Samurai !
-Je règne ici depuis des siècles !
-
+Je regne ici depuis des siecles !
+[Survivez a chaque tour en esquivant
+les carres blancs, attention la map
+se redessine]

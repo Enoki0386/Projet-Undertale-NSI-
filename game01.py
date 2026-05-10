@@ -225,6 +225,8 @@ class Game01:
         self.map.minigame.grille.clear()
         self.map.minigame.grille = self.map.minigame.grille_minigame2()
         self.map.minigame.place_cursor_and_win_case()
+        self.map.minigame.survival_timer = 0
+        self.map.minigame.compteur = 0
         
 
     def launch_minigame_player(self, screen):
@@ -353,7 +355,7 @@ class Game01:
                         # Changement de map
                         px, py = self.map.player.rect.centerx, self.map.player.rect.centery
                         if event.key == pygame.K_LSHIFT:
-                            if 600 < px < 630 and 630 < py < 660 and self.map.boss.health == 0 and self.map_actuelle == 1:
+                            if 600 < px < 630 and 630 < py < 660 and self.map_actuelle == 1:
                                 self.map_actuelle = self.cartes[1]
                                 self.map.load_maps(2, 28, 653)
                                 self.sons.play_music(2)
@@ -361,7 +363,7 @@ class Game01:
                                 self.map_actuelle = self.cartes[0]
                                 self.map.load_maps(1, 600, 630)
                                 self.sons.play_music(1)
-                            elif 1300 < px < 1450 and 1000 < py < 1150 and self.map.boss.health == 0 and self.map_actuelle == 2 and self.map.boss.health == 0:
+                            elif 1300 < px < 1450 and 1000 < py < 1150 and self.map_actuelle == 2 and self.map.boss.health == 0:
                                 self.map_actuelle = self.cartes[2]
                                 self.map.load_maps(3, 200, 100)
                                 self.sons.play_music(3)

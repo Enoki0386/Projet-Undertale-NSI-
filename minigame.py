@@ -1,9 +1,26 @@
+'''
+FICHIER MINIJEUX (PAR ALEKSANDAR)
+Ce fichier vient apporter 4 minijeux au jeu en tant que tel, ces minijeux font parti du fonctionnement de Undertale. Ainsi il
+se trouve 3 minijeux appartenant au boss, tandis qu'un seul au joueur, donc :
+    tour d'attaque du joueur - le joueur joue à son minijeu afin de blesser le boss
+    tour d'attaque du boss - le joueur joue à ce minijeu afin de ne pas se faire blesser par le boss
+'''
+# import des bibliothèques indispensables
 import pygame
 from random import randint
 
 class Projectile(pygame.sprite.Sprite):
+    '''
+    Classe destinée à créer l'objet Projectile, indispensable lors des mini-jeux. La classe hérite de pygame.sprite.Sprite,
+    cette classe appartient à pygame, elle permet de créer un sprite, ainsi ici je peux utiliser ses attributs pour gérer le
+    fonctionnement de mes minijeux
+    '''
 
     def __init__(self, x, y, speed):
+        '''
+        le init va définir les variables caractérisant le projectile
+        '''
+        # permet de récupérer les caractéristiques de la classe pygame.sprite.Sprite
         super().__init__()
 
         # définition des variables indispensables
@@ -17,44 +34,65 @@ class Projectile(pygame.sprite.Sprite):
 
 
     def move(self):
-
+        '''
+        Cette méthode est utile au mini jeu 1 du boss, elle vient déplacer le projectile de haut en bas
+        '''
+        # déplacement du rect vers le bas : valeur en y plus élevée à chaque appel
         self.rect.y += self.speed
     
 
     def missile_mode(self, rect):
-
+        '''
+        Cette méthode permet au projectile de se déplacer afin de traquer le joueur dans le mini jeu, tel un missile
+        '''
+        # j'assigne les différences de distances entre le joueur et le projectile en x et y
+        # pour cela j'utilise le centre de chaque rectangle 
         dx = rect.centerx - self.rect.centerx
         dy = rect.centery - self.rect.centery
 
         # Déplacement X
-        if abs(dx) > 2:  
-            step_x = self.speed if dx > 0 else -self.speed
+        if abs(dx) > 2:  # si la différence en x est supérieure à 2
+            step_x = self.speed if dx > 0 else -self.speed # signe de cette différence
+            # si positive : joueur devant, donc on déplace le projectile de gauche à droite
+            # sinon (négative) : joueur derrière, donc on déplace le projectile de droite à gauche (d'où -)
             self.rect.x += step_x
  
         # Déplacement Y
-        if abs(dy) > 2:
-            step_y = self.speed if dy > 0 else -self.speed
+        if abs(dy) > 2: # si la différence en y est supérieure à 2
+            step_y = self.speed if dy > 0 else -self.speed # signe de cette différence
+            # si positive : joueur devant, donc on déplace le projectile de gauche à droite
+            # sinon (négative) : joueur derrière, donc on déplace le projectile de droite à gauche (d'où -)
             self.rect.y += step_y
     
 
     def place_rect(self, x, y):
-
+        '''
+        Cette méthode vise à placer les projectiles un par un. Sachant que deux minijeux utilisent les projectiles,
+        il faut les placer de deux manières différentes, donc on ne peut pas le faire une seule fois dans le init :
+        voilà l'utilité de la méthode
+        '''
         self.rect.x = x
         self.rect.y = y
     
 
     def set_speed(self, speed):
-
+        '''De la même manière et des mêmes raisons que self.place_rect(x, y), cette méthode définie la vitesse de déplacement
+        des projectiles
+        '''
         self.speed = speed
 
 
     def draw_projectile(self, screen):
-        
+        '''
+        Cette méthode vise uniquement à afficher le projectile
+        '''
         screen.blit(self.image, (self.rect.x, self.rect.y))
 
 
 class Minigame(pygame.sprite.Sprite):
-
+    '''
+    Cette classe vise directement à créer le mini jeu, elle hérite aussi de pygame.sprite.Sprite car elle va créer un 
+    curseur (sprite) que le joueur va utiliser afin de jouer dans les mini jeux'''
     def __init__(self):
 
         super().__init__()
@@ -122,25 +160,25 @@ class Minigame(pygame.sprite.Sprite):
 
     def move_case_right(self):
 
-        if self.rect2.x + 60 <= self.width + self.x:
+        if self.rect2.x + 60 <= 400 + 400 - 60:
             self.rect2.x += 60
 
     
     def move_case_left(self):
 
-        if self.rect2.x - 60 >= self.x:
+        if self.rect2.x - 60 >= 400:
             self.rect2.x -= 60
     
 
     def move_case_up(self):
 
-        if self.rect2.y - 60 >= self.y:
+        if self.rect2.y - 60 >= 200:
             self.rect2.y -= 60
     
 
     def move_case_down(self):
 
-        if self.rect2.y + 60 <= self.y + self.height:
+        if self.rect2.y + 60 <= 200 + 300:
             self.rect2.y += 60
     
 
@@ -184,7 +222,7 @@ class Minigame(pygame.sprite.Sprite):
         # mini jeu
         pygame.draw.rect(screen, (0, 0, 0), (self.x, self.y, self.width, self.height), border_radius=10)
         pygame.draw.rect(screen, (255, 255, 255), (self.x, self.y, self.width, self.height), 2, border_radius=10)
-        pygame.draw.line(screen, (255, 255, 255), (self.x, self.y + self.height - self.rect.height - 5), (self.x + self.width, self.y + self.height - self.rect.height - 5), 1)
+        pygame.draw.line(screen, (255, 255, 255), (self.x, self.y + self.height - self.rect.height - 5 + self.rect.height / 2), (self.x + self.width, self.y + self.height - self.rect.height - 5 + self.rect.height / 2), 1)
 
         # curseur
         screen.blit(self.image, (self.rect.x, self.rect.y))
@@ -265,8 +303,6 @@ class Minigame(pygame.sprite.Sprite):
                 pygame.draw.rect(screen, color, pygame.Rect(x1, y1, case, case))
                 pygame.draw.rect(screen, (200, 200, 200), pygame.Rect(x1, y1, case, case), 1)
         
-        pygame.draw.rect(screen, (0, 128, 0), pygame.Rect(self.j, self.i, case, case))
-        
         screen.blit(self.image, (self.rect2.x, self.rect2.y))
     
 
@@ -276,43 +312,49 @@ class Minigame(pygame.sprite.Sprite):
         col = (self.rect2.centerx - 400) // case
         line = (self.rect2.centery - 200) // case
 
+        self.compteur += 1
+        self.survival_timer += 1
+
         cols = 400 // case
         lines = 300 // case
 
         if not (0 <= col < cols and 0 <= line < lines):
             return
+        
+        if self.survival_timer >= self.survival_duration:
+            self.finished = True
+            self.win = True
+            return 
 
-        self.compteur += 1
-
-        if self.compteur >= 200: # 60 fps à chaque tour de boucle, ici 10s = 10 tours de boucles donc 10 x 60 = 600 fps
+        if self.compteur >= 300: # 60 fps à chaque tour de boucle, ici 10s = 10 tours de boucles donc 10 x 60 = 600 fps
             self.grille = self.grille_minigame2()
             self.compteur = 0
         
         if self.grille[line][col] == 1:
             self.finished = True
             self.win = False
-        
+        '''
         elif self.j == line and self.i == col:
             self.finished = True
             self.win = True
-
+        '''
                 
     def place_cursor_and_win_case(self):
 
         case = 60
         cols = 400 // case
         lines = 300 // case
-
+        '''
         # case gagnante
         line = randint(0, lines - 1)
         col = randint(0, cols - 1)
         self.i = 200 + (case * line)
         self.j = 400 + (case * col)
-        
+        '''
         # curseur
         for i in range(lines):
             for j in range(cols):
-                if self.grille[i][j] == 0 and not (i == line and j == col):
+                if self.grille[i][j] == 0: # and not (i == line and j == col):
                     self.rect2.y = 200 + (case * i) + (case // 2) - (self.rect.height // 2)
                     self.rect2.x = 400 + (case * j) + (case // 2) - (self.rect.width // 2)
                     return
