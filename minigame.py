@@ -333,24 +333,14 @@ class Minigame(pygame.sprite.Sprite):
         if self.grille[line][col] == 1:
             self.finished = True
             self.win = False
-        '''
-        elif self.j == line and self.i == col:
-            self.finished = True
-            self.win = True
-        '''
+
                 
     def place_cursor_and_win_case(self):
 
         case = 60
         cols = 400 // case
         lines = 300 // case
-        '''
-        # case gagnante
-        line = randint(0, lines - 1)
-        col = randint(0, cols - 1)
-        self.i = 200 + (case * line)
-        self.j = 400 + (case * col)
-        '''
+        
         # curseur
         for i in range(lines):
             for j in range(cols):
@@ -361,15 +351,9 @@ class Minigame(pygame.sprite.Sprite):
     
 
     def get_pos_cursor(self):
-
-        if self.x < self.rect.x < self.width and self.y < self.rect.y < self.height:
-            mx, my = pygame.mouse.get_pos()
-            self.rect.x = mx
-            self.rect.y = my
-        
-        else:
-            self.rect.x = self.x + (self.width / 2)
-            self.rect.y = self.y + (self.height / 2)
+        mx, my = pygame.mouse.get_pos()
+        self.rect.x = max(self.x, min(mx, self.x + self.width - self.rect.width))
+        self.rect.y = max(self.y, min(my, self.y + self.height - self.rect.height))
 
     
     def draw_minigame_4(self, screen):

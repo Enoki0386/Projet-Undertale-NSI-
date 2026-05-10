@@ -50,7 +50,6 @@ class Game01:
         self.tutoriel_2         = True
 
         self.combat             = None # système de combat off (s'active dans le run)
-        self.in_combat_before   = False # permet de ne pas relancer le combat
 
         # permet d'indiquer le tour suivant en combat selon le temps voulu
         self.turn_display_timer    = 0
@@ -363,7 +362,7 @@ class Game01:
                                 self.map_actuelle = self.cartes[0]
                                 self.map.load_maps(1, 600, 630)
                                 self.sons.play_music(1)
-                            elif 1300 < px < 1450 and 1000 < py < 1150 and self.map_actuelle == 2 and self.map.boss.health == 0:
+                            elif 1300 < px < 1450 and 1000 < py < 1150 and self.map_actuelle == 2:
                                 self.map_actuelle = self.cartes[2]
                                 self.map.load_maps(3, 200, 100)
                                 self.sons.play_music(3)
@@ -398,6 +397,14 @@ class Game01:
                                 self.state = 'dialogue'
                                 self.sons.play_talk()  # Joue le son de dialogue dans sons
                                 break
+
+                        
+                        if event.key == pygame.K_f:
+                            if not self.minigame_active:
+                                if (abs(player.rect.centerx - self.map.boss.rect.centerx) < 50 and abs(player.rect.centery - self.map.boss.rect.centery) < 50):
+                                    self.state = 'combat'
+                                    self.combat = Combat(self.map.player, self.map.boss)
+                                    self.index = self.map.boss_index
                     
 
                     elif self.state == 'minigame':
@@ -672,16 +679,6 @@ class Game01:
             self.tutoriel = Tutoriel('tutoriel_2')
             self.tutoriel_2 = False
             self.state = 'tutoriel'
-
-
-        # permet de passer en mini jeu lorsqu'on s'approche du boss / CHANGEMENT ON PASSE EN COMBAT
-        if not self.minigame_active:
-
-            if (abs(player.rect.centerx - self.map.boss.rect.centerx) < 50 and abs(player.rect.centery - self.map.boss.rect.centery) < 50) and not self.in_combat_before:
-                self.state = 'combat'
-                self.combat = Combat(self.map.player, self.map.boss)
-                self.index = self.map.boss_index
-                self.in_combat_before = True
         
 
         # ── NPC (juste animé) ──────────────────────────────
