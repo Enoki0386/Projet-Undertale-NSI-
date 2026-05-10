@@ -1,3 +1,7 @@
 Bonjour, voyageur !
 Vous etes enfin sorti du temple.
 L'air frais est si bon ici.
+Vous savez, si vous suivez le chemin, 
+celui qui vous mene en haut a droite la.
+Lorsque celui ci se fini, cliquez sur Maj
+pour revenir au temple 2

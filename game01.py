@@ -364,11 +364,11 @@ class Game01:
                                 self.sons.play_music(1)
                             elif 1300 < px < 1450 and 1000 < py < 1150 and self.map_actuelle == 2:
                                 self.map_actuelle = self.cartes[2]
-                                self.map.load_maps(3, 200, 100)
+                                self.map.load_maps(3, 550, 100)
                                 self.sons.play_music(3)
-                            elif 1300 < px < 1450 and 1000 < py < 1150 and self.map_actuelle == 3:
+                            elif 1250 < px < 1450 and 28 < py < 228 and self.map_actuelle == 3:
                                 self.map_actuelle = self.cartes[1]
-                                self.map.load_maps(2, 200, 100)
+                                self.map.load_maps(2, 1375, 1075)
                                 self.sons.play_music(2)
                                 
                         # Ramassage d'item
