@@ -4,7 +4,6 @@ from maps import Map
 from combat_system import Combat
 from tutoriel import Tutoriel
 from end import GameOverScreen
-from endimg import FinalEndingScreen
 from sons import bg_son
 from cinematique import Cinematique
 
@@ -61,7 +60,6 @@ class Game01:
         self.map        = Map()
         self.tutoriel   = Tutoriel('tutoriel')
         self.game_over_screen = GameOverScreen(self.screen)
-        self.ending_screen = FinalEndingScreen(self.screen)
 
         # Initialiser le gestionnaire de sons
         self.sons       = bg_son()
@@ -787,23 +785,8 @@ class Game01:
                         # mort
                         if not self.phase_mort and self.map.boss.health <= 0:
                             self.phase_mort = True
-                            if self.index == 2:
-                                result = self.ending_screen.run('bad')
-                                if result == 'restart':
-                                    # Reset player health and position
-                                    self.map.player.health = self.map.player.max_health
-                                    self.map.player.rect.centerx = 430
-                                    self.map.player.rect.centery = 540
-                                    self.map.load_maps(1, 430, 540)
-                                    self.sons.play_music(1)
-                                    self.state = 'exploration'
-                                    # Reset phases
-                                    self.phase_mi_vie = False
-                                    self.phase_mort = False
-                                    self.cinematique = None
-                            else:
-                                self.cinematique = Cinematique(self.filenames[self.index], self.dialogues[self.index][2])
-                                self.state = 'cinematique'
+                            self.cinematique = Cinematique(self.filenames[self.index], self.dialogues[self.index][2])
+                            self.state = 'cinematique'
 
                 self.map.minigame.finished = False
                 self.map.minigame.COLOR = (0, 0, 0)
