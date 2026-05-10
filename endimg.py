@@ -127,50 +127,9 @@ class FinalEndingScreen:
 
             pygame.display.flip()
 
-    def draw_title(self, text: str):
-        pulse = math.sin(self.tick * 1.8) * 3
-        surf = self.font_title.render(text, True, C_TEXT)
-        tx = self.w // 2 - surf.get_width() // 2
-        ty = int(self.h * 0.16 + pulse)
+            elapsed = pygame.time.get_ticks() - start_ticks
+            if elapsed >= 5000:
+                pygame.quit()
+                sys.exit()
 
-        for offset, alpha in [(4, 90), (8, 55), (14, 25)]:
-            glow = self.font_title.render(text, True, C_GLOW)
-            glow.set_alpha(alpha)
-            self.screen.blit(glow, (tx, ty + offset))
-
-        self.screen.blit(surf, (tx, ty))
-
-    def draw_subtitle(self, text: str):
-        surf = self.font_sub.render(text, True, C_TEXT_GREY)
-        self.screen.blit(surf, (self.w // 2 - surf.get_width() // 2, self.h * 0.28))
-
-    def draw_image(self, image: pygame.Surface):
-        max_w = self.w - 160
-        max_h = self.h * 0.35
-        iw, ih = image.get_size()
-        scale = min(max_w / iw, max_h / ih, 1.0)
-        if scale < 1.0:
-            image = pygame.transform.smoothscale(image, (int(iw * scale), int(ih * scale)))
-
-        x = self.w // 2 - image.get_width() // 2
-        y = int(self.h * 0.35)
-        self.screen.blit(image, (x, y))
-
-    def draw_buttons(self, mx: int, my: int):
-        self.btn(self.btn_restart, 'RESTART', mx, my)
-        self.btn(self.btn_quit, 'QUITTER', mx, my)
-
-    def btn(self, rect: pygame.Rect, label: str, mx: int, my: int):
-        hovered = rect.collidepoint(mx, my)
-        bg = C_BTN_HOVER if hovered else C_BTN_IDLE
-        border = C_BORDER
-        color = C_TEXT
-
-        pygame.draw.rect(self.screen, bg, rect, border_radius=4)
-        pygame.draw.rect(self.screen, border, rect, 3 if hovered else 2, border_radius=4)
-
-        if hovered:
-            pygame.draw.rect(self.screen, C_GLOW, (rect.x, rect.y + 10, 3, rect.h - 20), border_radius=2)
-
-        txt = self.font_btn.render(label, True, color)
-        self.screen.blit(txt, (rect.x + (rect.w - txt.get_width()) // 2, rect.y + (rect.h - txt.get_height()) // 2))
+            clock.tick(60)
