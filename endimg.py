@@ -117,7 +117,7 @@ class FinalEndingScreen:
             subtitle = (
                 'Vous avez fui tous les boss jusqu\'au bout.'
                 if result == 'good'
-                else 'Vous avez tué tous les boss jusqu\'au troisième boss.'
+                else 'Vous avez tué tous les boss.'
             )
 
             self.draw_title(title)
