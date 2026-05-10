@@ -14,7 +14,7 @@ class LoreScreen:
 
     def load_images(self):
         images = []
-        for path in ["lore/marche.png", "lore/migraine.png"]:
+        for path in ["lore/migraine.png", "lore/marche.png"]:
             try:
                 image = pygame.image.load(path).convert_alpha()
             except pygame.error:
