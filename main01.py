@@ -1,4 +1,5 @@
 import pygame
+from cinelore import LoreScreen
 from game01 import Game01
 from title import TitleScreen
 
@@ -12,6 +13,5 @@ if __name__ == '__main__':
     action = TitleScreen(screen).run() 
  
     if action == 'play':
-        # On passe l'écran déjà créé à Game01 pour éviter de recréer la fenêtre
-        game = Game01()
-    game = Game01()
+        LoreScreen(screen).run()
+        Game01()
