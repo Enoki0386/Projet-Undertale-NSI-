@@ -319,6 +319,7 @@ class Game01:
 
         if self.cinematique.finished and self.phase_mort:
             self.state = 'exploration'
+            self.cinematique = None
         elif self.cinematique.finished:
             self.state = 'minigame'
 
