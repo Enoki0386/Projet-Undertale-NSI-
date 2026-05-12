@@ -500,6 +500,7 @@ class Game01:
                     self.map.player.health = self.map.player.max_health
                     self.map.player.rect.centerx = 430
                     self.map.player.rect.centery = 540
+                    self.map_actuelle = self.cartes[0]
                     self.map.load_maps(1, 430, 540)
                     self.sons.play_music(1)
                     self.state = 'exploration'
